@@ -1,0 +1,121 @@
+<!doctype html>
+<!--
+Copyright 2016 Google Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<html>
+
+<head>
+
+<style id="yip-test-styles">
+.yip-test-element {
+  font-family: cursive;
+  border: 1px solid #cacaca;
+  margin: 3px;
+  padding: 3px;
+}
+
+.yip-test-element-normal {
+  font-size: 10px;
+}
+
+.yip-test-element-medium {
+  font-size: 20px;
+}
+
+.yip-test-element-massive {
+  font-size: 40px;
+}
+</style>
+
+</head>
+
+<body>
+
+<h1>Yip Demo</h1>
+
+<yip-test-element>I am regular</yip-test-element>
+<yip-test-element medium>I am medium</yip-test-element>
+<yip-test-element massive>I am massive</yip-test-element>
+
+
+<yip-test-element>
+  I am the parent of the nested elements.
+  <yip-test-element medium>
+    I am a medium element inside another element.
+  </yip-test-element>
+  <yip-test-element massive>
+    I am a massive element inside another element.
+    <yip-test-element>
+      I am a regular element inside a massive element inside another element
+    </yip-test-element>
+
+  </yip-test-element>
+</yip-test-element>
+
+
+<yip-note>
+  Yo
+</yip-note>
+
+<script src="../src/yip.js"></script>
+
+<script>
+
+  class TestElementController extends Yip.Controller {
+
+    childClasses() {
+      return {
+        'yip-test-element': true,
+        'yip-test-element-medium': this.element.attributes['medium'],
+        'yip-test-element-massive': this.element.attributes['massive'],
+        'yip-test-element-normal': !(this.element.attributes['massive'] && this.element.attributes['medium']),
+      }
+    }
+
+    childStyles() {
+      return '#yip-test-styles';
+    }
+
+
+  }
+
+  Yip.Add('yip-test-element', TestElementController);
+
+
+
+  class YipNote extends Yip.Controller {
+
+    childName() {
+      return 'aside'
+    }
+
+    childClasses() {
+      return {
+        'warning': this.element.attributes.warning,
+        'note': this.element.attributes.note,
+      }
+    }
+      
+  }
+
+Yip.Add('yip-note', YipNote);
+
+
+</script>
+
+</body>
+
+
+</html>
