@@ -1,3 +1,6 @@
+(function (exports) {
+'use strict';
+
 /**
  * Copyright 2016 Google Inc.
  *
@@ -113,7 +116,7 @@
  *
  * Yip can create an element that uses the specific controller you pass.
  */
-export class Element extends HTMLElement {
+class Element extends HTMLElement {
 
   constructor() {
     super();
@@ -217,8 +220,12 @@ export class Element extends HTMLElement {
  *   The type of the controller.
  *
  */
-export function add(elementName, elementType) {
+function add(elementName, elementType) {
   customElements.define(elementName, elementType);
   return elementType;
 }
 
+exports.Element = Element;
+exports.add = add;
+
+}((this.yip = this.yip || {})));

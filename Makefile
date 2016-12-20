@@ -12,8 +12,22 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-demo:
-	twistd -n web --path=.
+dev:
+	make serve & watch -n 1 make build doc
 
-doc:
-	jsdoc -c configs/jsdoc_conf.json && twistd -n web --path=docs/
+doc: init
+	esdoc -c etc/esdoc_conf.json
+
+build: init
+	rollup -c etc/rollup_conf.js
+	cp dist/yip.js example/
+
+init:
+	mkdir -p docs dist
+
+serve:
+	# replace this with whatever server you use
+	# I use one I wrote.
+	127
+
+

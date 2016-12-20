@@ -69,48 +69,48 @@ limitations under the License.
   Yo
 </yip-note>
 
-<script src="../src/yip.js"></script>
+<script src="yip.js"></script>
 
 <script>
 
-  class TestElementController extends Yip.Controller {
+  class TestElement extends yip.Element {
 
-    childClasses() {
+    yipChildClasses() {
       return {
         'yip-test-element': true,
-        'yip-test-element-medium': this.element.attributes['medium'],
-        'yip-test-element-massive': this.element.attributes['massive'],
-        'yip-test-element-normal': !(this.element.attributes['massive'] && this.element.attributes['medium']),
+        'yip-test-element-medium': this.attributes['medium'],
+        'yip-test-element-massive': this.attributes['massive'],
+        'yip-test-element-normal': !(this.attributes['massive'] && this.attributes['medium']),
       }
     }
 
-    childStyles() {
+    yipChildStyles() {
       return '#yip-test-styles';
     }
 
 
   }
 
-  Yip.Add('yip-test-element', TestElementController);
+  yip.add('yip-test-element', TestElement);
 
 
 
-  class YipNote extends Yip.Controller {
+  class Note extends yip.Element {
 
-    childName() {
+    yipChildName() {
       return 'aside'
     }
 
-    childClasses() {
+    yipChildClasses() {
       return {
-        'warning': this.element.attributes.warning,
-        'note': this.element.attributes.note,
+        'warning': this.attributes.warning,
+        'note': this.attributes.note,
       }
     }
       
   }
 
-Yip.Add('yip-note', YipNote);
+  yip.add('yip-note', Note);
 
 
 </script>
