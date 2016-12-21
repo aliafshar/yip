@@ -1,17 +1,56 @@
-(function (exports) {
-'use strict';
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">src/yip.js | yip API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+<script data-ice="userScript" src="user/script/0-yipUi.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
 
-/**
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/yip.js~Element.html">Element</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-add">add</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">src/yip.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">/**
  * Copyright 2016 Google Inc.
  *
- * Licensed under the Apache License, Version 2.0 (the "License");
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
  *   http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
@@ -34,7 +73,7 @@
  *
  * Yip can create an element that uses the specific controller you pass.
  */
-class Element extends HTMLElement {
+export class Element extends HTMLElement {
 
   constructor() {
     super();
@@ -80,28 +119,28 @@ class Element extends HTMLElement {
     if (styleSelector) {
       const styleNode = document.querySelector(styleSelector);
       const newStyleNode = styleNode.cloneNode(true);
-      newStyleNode.id = '';
+      newStyleNode.id = &apos;&apos;;
       this.yipRoot.append(newStyleNode);
     }
   }
 
 
   yipBuildRoot() {
-    return this.attachShadow({mode: 'open'});
+    return this.attachShadow({mode: &apos;open&apos;});
   }
 
   /**
    * Called to build the element that is attached to the DOM.
    *
    * If overriding, you must ensure that if you want child elements, to attach
-   * the `<slot></slot>` element as a child.
+   * the `&lt;slot&gt;&lt;/slot&gt;` element as a child.
    */
   yipBuildChild() {
     if (this.yipChildTemplate()) {
       let child = this.yipBuildTemplateChild();
       if (!child) {
-        child = document.createElement('div');
-        child.textContent = 'template error';
+        child = document.createElement(&apos;div&apos;);
+        child.textContent = &apos;template error&apos;;
       }
       return child;
     } else {
@@ -115,14 +154,14 @@ class Element extends HTMLElement {
     const childTemplate = document.querySelector(this.yipChildTemplate());
     if (childTemplate) {
       if (childTemplate.content.children.length != 1) {
-        console.warn('Template has != 1 children');
+        console.warn(&apos;Template has != 1 children&apos;);
         return;
       }
       const copyTemplate = childTemplate.cloneNode(true);
       copyTemplate.innerHTML = this.yipRenderTemplate(copyTemplate.innerHTML);
       return copyTemplate.content.children[0].cloneNode(true);
     } else {
-      console.warn('Template not found.', this.yipChildTemplate());
+      console.warn(&apos;Template not found.&apos;, this.yipChildTemplate());
       return;
     }
   }
@@ -133,11 +172,11 @@ class Element extends HTMLElement {
 
 
   yipBuildSlot() {
-    return document.createElement('slot');
+    return document.createElement(&apos;slot&apos;);
   }
 
   yipChildName() {
-    return 'div';
+    return &apos;div&apos;;
   }
 
   yipChildStyles() {
@@ -148,7 +187,7 @@ class Element extends HTMLElement {
    * Called to retrieve a list of classes that will be applied to the shadow
    * element.
    *
-   * All of the custom element's definition is available, and can be used to
+   * All of the custom element&apos;s definition is available, and can be used to
    * conditionally add classes to the child element.
    *
    * @return {object} Mapping class names to a boolean value of whether to
@@ -180,12 +219,25 @@ class Element extends HTMLElement {
  *   The type of the controller.
  *
  */
-function add(elementName, elementType) {
+export function add(elementName, elementType) {
   customElements.define(elementName, elementType);
   return elementType;
 }
 
-exports.Element = Element;
-exports.add = add;
+</code></pre>
 
-}((this.yip = this.yip || {})));
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.4.8)</span></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

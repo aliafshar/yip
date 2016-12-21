@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl">
+  <title data-ice="title">yip API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+<script data-ice="userScript" src="user/script/0-yipUi.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/src/yip.js~Element.html">Element</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-add">add</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><h1 id="yip">yip</h1>
+<p><strong>Tiny custom elements for the web.</strong> Yip is a JavaScript library which supports:</p>
+<ul>
+<li>Registering new custom elements elements</li>
+<li>Using <code>&lt;template&gt;</code> for element templates</li>
+<li>Pluggable template transform</li>
+<li>Building an element in shadow dom</li>
+<li>Scoped styles</li>
+<li>Custom events</li>
+</ul>
+<h3 id="quick">Quick</h3>
+<ul>
+<li><a href="https://github.com/aliafshar/yip">Github</a></li>
+<li><a href="https://yipjs-7c3d2.firebaseapp.com/">Docs</a></li>
+<li><a href="https://yipjs-7c3d2.firebaseapp.com/demo">Demo</a></li>
+<li><a href="https://github.com/aliafshar/yip/blob/master/LICENSE">License</a> (spoiler:
+Apache2)</li>
+</ul>
+<h3 id="start-now">Start now</h3>
+<p>To get started we are going to create a custom element <code>my-note</code> that will
+render as an HTML <code>&lt;aside&gt;</code> element. That&apos;s all.</p>
+<p>First, subclass <code>yip.Element</code> to create your custom element, then register it
+with yip.</p>
+<pre><code><code class="source-code prettyprint">class Note extends yip.Element {
+
+  yipChildName() { return &apos;aside&apos;; }
+
+}
+
+yip.Add(&apos;my-note&apos;, Note);</code>
+</code></pre><p>Now you can use your elements with:</p>
+<pre><code><code class="source-code prettyprint">&lt;my-note&gt;yo!&lt;/my-note&gt;</code>
+</code></pre><p>And they will render as:</p>
+<pre><code><code class="source-code prettyprint">&lt;aside&gt;yo!&lt;/aside&gt;</code>
+</code></pre><h3 id="applying-element-classes-and-attribute-handling">Applying Element Classes and Attribute Handling</h3>
+<p>You might want to add attribute handling to your element. The
+attributes are your API. So, say I want to handle an attribute <code>warning</code> in
+order to read:</p>
+<pre><code><code class="source-code prettyprint">&lt;my-note warning&gt;meep!&lt;/my-note&gt;</code>
+</code></pre><p>I might likely want to apply a class to the child aside in order to affect how it
+looks. To set styles conditionally, override <code>yipChildClasses</code> on your element
+to provide a list of classes. Here we add <code>warning</code>, <code>error</code> and <code>note</code>.</p>
+<pre><code><code class="source-code prettyprint">class Note extends yip.Element {
+
+  yipChildName() {
+    return &apos;aside&apos;
+  }
+
+  yipChildClasses() {
+    return {
+      &apos;my-note&apos;: true,
+      &apos;warning&apos;: this.attributes.warning,
+      &apos;error&apos;: this.attributes.error,
+      &apos;note&apos;: !(this.attributes.error &amp;&amp;
+                this.attributes.warning),
+    }
+  }
+
+}
+
+yip.add(&apos;my-note&apos;, Note);</code>
+</code></pre><p>Now, using the markup </p>
+<pre><code><code class="source-code prettyprint">&lt;my-note&gt;yo!&lt;/my-note&gt;
+&lt;my-note warning&gt;meep!&lt;/my-note&gt;
+&lt;my-note error&gt;ohnoes!&lt;/my-note&gt;</code>
+</code></pre><h3 id="using-template-s">Using <code>&lt;template&gt;</code>s</h3>
+<p>You might want a more complicated UI, and decide to write it in a template:</p>
+<pre><code><code class="source-code prettyprint">&lt;template id=&quot;my-note-template&quot;&gt;
+  &lt;aside&gt;
+    &lt;div class=&quot;aside-content&quot;&gt;
+      &lt;slot&gt;&lt;/slot&gt;
+    &lt;/div&gt;
+    &lt;div cass=&quot;aside-actions&quot;&gt;
+      &lt;button&gt;Ok&lt;/button&gt;
+      &lt;button&gt;Not Ok&lt;/button&gt;
+    &lt;/div&gt;
+  &lt;/aside&gt;
+&lt;/template&gt;</code>
+</code></pre><p>You can then use this template:</p>
+<pre><code><code class="source-code prettyprint">class Note extends yip.Element {
+
+  yipChildTemplate() { return &apos;#my-note-template&apos;; }
+
+}</code>
+</code></pre><p>The template should have a single child element, and that element will become
+the element&apos;s child.</p>
+<h3 id="applying-an-external-template-transformer">Applying an external template transformer</h3>
+<p>You might decide that you want more complicated templating. Plug in whatever you
+like by overriding <code>yipRenderTemplate</code>. For example to use doT templates:</p>
+<pre><code><code class="source-code prettyprint">class Note extends yip.Element {
+
+  yipChildTemplate() { return &apos;#my-note-template&apos;; }
+
+  yipRenderTemplate(input) {
+    return doT.template(input)({&apos;element&apos;: this});
+  }
+
+}</code>
+</code></pre><p>Now we can have all kinds of crazy templates. The example above passes the
+element into the template, so it can get used as the <code>it.element</code> by doT.</p>
+<pre><code><code class="source-code prettyprint">&lt;template id=&quot;my-note-template&quot;&gt;
+  &lt;aside&gt;
+    Is this a warning?
+    {{= it.element.attributes.warning  }}
+  &lt;/aside&gt;
+&lt;/template&gt;</code>
+</code></pre><p>Bring your own templating system, and hook it in. No need for plugins
+or anything.</p>
+<h3 id="adding-element-specific-styles">Adding element-specific styles</h3>
+<p>To a stylesheet to be scoped to the element, override <code>yipChildStyles()</code> to
+return the selector of the style sheet you want.</p>
+<p>First create the styles:</p>
+<pre><code><code class="source-code prettyprint">&lt;style id=&quot;my-note-styles&quot;&gt;
+  .my-note { ... }
+&lt;/style&gt;</code>
+</code></pre><p>Then specify them.</p>
+<pre><code><code class="source-code prettyprint">class Note extends yip.Element {
+
+  yipChildStyles() { return &apos;#my-note-styles&apos;; }
+
+
+}</code>
+</code></pre><h3 id="emiting-custom-events">Emiting custom events</h3>
+<p>Elements should emit events. You can easily dispatch an event on your custom
+element, like:</p>
+<pre><code><code class="source-code prettyprint">el.addEventListener(&apos;action-clicked&apos;, function() { //... });
+el.yipEmit(&apos;action-clicked&apos;);</code>
+</code></pre><h3 id="connecting-internal-events">Connecting internal events</h3>
+<p><code>yipConnect</code> is called after the entire dom has been created, so use it to
+connected internal events.</p>
+<p><hr>
+
+</p>
+<p><em>Note: yip is not an official Google product. Didn&apos;t wanna be one anyway, so
+there.</em></p>
+<p><img src="https://yipjs-7c3d2.firebaseapp.com/art/alien.png" alt="yip logo"></p>
+</div>
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.4.8)</span></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

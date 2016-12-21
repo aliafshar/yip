@@ -1,4 +1,6 @@
 {
+    "title": "yip",
     "source": "./src",
-    "destination": "./docs"
+    "destination": "./docs",
+    "scripts": ["yipUi.js"]
 }

@@ -15,97 +15,15 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *
+ */
+
+ /**
  * @fileoverview
  *
  * Yip is a micro (read featureless) library for creating custom elements.
  *
- * ## Get started
- *
- * to get started, for example
- *
- * ```
- *
- * class YipNote extends YipController {
- *   childName() {
- *     return 'aside'
- *   }
- *   childClasses() {
- *     return {
- *       'warning': this.element.attributes.warning,
- *       'note': this.element.attributes.note,
- *     }
- *   }        
- * }
- *
- * Yip.add('yip-note', YipNote);
- * ```
- * Now, using the markup 
- * ```
- * <yip-note>
- * Hi!
- * </yip-note>
- *
- * <yip-note warning>
- * Beware!
- * </yip-note>
- * ```
- *
- * That's all really.
- *
- * Configuring the shadow element
- *
- * There is always going to be a top-level element in the shadow dom. This gets
- * rendered by your element. Yip always refers to the element as the "child" of
- * the custom element.
- *
- * You should configure the child based on attributes and other things applied
- * to the element. For example
- *
- * ```
- * <yip-note warning>Yikes!</yip-note>
- * ```
- *
- * Element might actually translate into a child like:
- * ```
- * <div class="yip-note yip-note-warning">Yikes!</div>
- * ```
- *
- * Class names should be applied by overriding the controller's
- * childClasses method, like:
- * 
- * ```
- * class YipNoteController extends YipController {
- *  childClasses() {
- *   return {
- *    // Always apply this class.
- *    'yip-note': true,
- *
- *    // Only apply this class if the `warning` attribute is present.
- *    'yip-note-warning': this.element.attributes['warning']
- *   }
- *  }
- * }
- * ```
- *
- *
- * ### How does it work?
- *
- * It uses the custom elements v1 API, so you should probably check
- * http://caniuse.com/#feat=custom-elementsv1 because at the moment there are
- * not many browsers supporting it and the pollyfill is not quite there. Onwards
- * and upwards though.
- *
- * The library takes care of creating a custom element with a shadowdom, from
- * some configuation options. All the options are retrieved from a controller
- * instance, which exists 1:1 per element.
- *
- * # API
- *
+ * https://github.com/aliafshar/yip
  */
-
-
-
 
 
 /**
@@ -121,14 +39,26 @@ class Element extends HTMLElement {
   constructor() {
     super();
     this.yipRoot = this.yipBuildRoot();
-    this.yipChild = this.yipBuildchild();
+    this.yipChild = this.yipBuildChild();
     this.yipApplyClasses();
     this.yipApplyStyles();
-    this.yipChild.append(this.yipBuildSlot());
+    this.yipConnect();
     this.yipRoot.append(this.yipChild);
   }
 
+  /**
+   * Called to transform a template.
+   *
+   * Override it to add your own templating system if you want to do
+   * interpolation.
+   */
+  yipRenderTemplate(input) {
+    return output;
+  }
 
+  yipChildTemplate() {
+    return null;
+  }
   
   /**
    * Apply the configured classes the the child element.
@@ -147,7 +77,6 @@ class Element extends HTMLElement {
    */
   yipApplyStyles(styles) {
     const styleSelector = this.yipChildStyles();
-    console.log(styleSelector);
     if (styleSelector) {
       const styleNode = document.querySelector(styleSelector);
       const newStyleNode = styleNode.cloneNode(true);
@@ -167,9 +96,41 @@ class Element extends HTMLElement {
    * If overriding, you must ensure that if you want child elements, to attach
    * the `<slot></slot>` element as a child.
    */
-  yipBuildchild() {
+  yipBuildChild() {
+    if (this.yipChildTemplate()) {
+      let child = this.yipBuildTemplateChild();
+      if (!child) {
+        child = document.createElement('div');
+        child.textContent = 'template error';
+      }
+      return child;
+    } else {
+      const child = this.yipBuildElementChild();
+      child.append(this.yipBuildSlot());
+      return child;
+    }
+  }
+
+  yipBuildTemplateChild() {
+    const childTemplate = document.querySelector(this.yipChildTemplate());
+    if (childTemplate) {
+      if (childTemplate.content.children.length != 1) {
+        console.warn('Template has != 1 children');
+        return;
+      }
+      const copyTemplate = childTemplate.cloneNode(true);
+      copyTemplate.innerHTML = this.yipRenderTemplate(copyTemplate.innerHTML);
+      return copyTemplate.content.children[0].cloneNode(true);
+    } else {
+      console.warn('Template not found.', this.yipChildTemplate());
+      return;
+    }
+  }
+
+  yipBuildElementChild() {
     return document.createElement(this.yipChildName());
   }
+
 
   yipBuildSlot() {
     return document.createElement('slot');
@@ -197,12 +158,11 @@ class Element extends HTMLElement {
     return {};
   }
 
-  set innerHTML(value) {
-    this.child.innerHTML = value;
+  yipConnect() {
   }
 
-  get innerHTML() {
-    return this.child.innerHTML;
+  yipEmit(name) {
+    this.dispatchEvent(new Event(name));
   }
 
 }

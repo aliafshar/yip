@@ -13,21 +13,25 @@
 # limitations under the License.
 
 dev:
-	make serve & watch -n 1 make build doc
+	make serve &
+	watch -n 1 make build doc
 
 doc: init
 	esdoc -c etc/esdoc_conf.json
 
 build: init
 	rollup -c etc/rollup_conf.js
-	cp dist/yip.js example/
+	cp dist/yip.js docs/demo/
 
 init:
 	mkdir -p docs dist
 
+deploy:
+	cp etc/firebase_conf.json firebase.json
+	firebase deploy
+	rm firebase.json
+
 serve:
-	# replace this with whatever server you use
-	# I use one I wrote.
-	127
+	127 docs
 
 

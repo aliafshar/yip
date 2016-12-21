@@ -1,0 +1,154 @@
+<!doctype html>
+<!--
+Copyright 2016 Google Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<html>
+
+<head>
+
+<style id="my-note-styles">
+.my-note {
+  font-family: cursive;
+  border: 1px solid #cacaca;
+  margin: 3px;
+  padding: 3px;
+}
+
+.my-note.note {
+  font-size: 10px;
+}
+
+.my-note.warning {
+  font-size: 20px;
+}
+
+.my-note.error {
+  font-size: 30px;
+}
+
+</style>
+
+<template id="my-note-template">
+  <aside>
+    {{=it.element.yipChildName()}}
+    <div class="aside-body">
+    <slot></slot>
+    </div>
+    <div class="aside-actions">
+      <button>Ok</button>
+      <button>Not Ok</button>
+    </div>
+  </aside>
+</template>
+
+</head>
+
+<body>
+
+<h1>Yip Demo</h1>
+
+<my-note>I am regular</my-note>
+<my-note warning>I am a warning</my-note>
+<my-note error>I am an error</my-note>
+
+
+<my-note error>I am an error parent
+  <my-note>
+    I am regular inside the error
+    <my-note warning>I am a warning inside the regular</my-note>
+  </my-note>
+</my-note>
+
+<my-note-2>I am regular</my-note-2>
+<my-note-2 warning>I am warning</my-note-2>
+<my-note-2 error>I am error</my-note-2>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/dot/1.1.0/doT.min.js"></script>
+<script src="yip.js"></script>
+
+<script>
+
+
+class Note extends yip.Element {
+
+  yipChildName() {
+    return 'aside'
+  }
+
+  yipChildClasses() {
+    return {
+      'my-note': true,
+      'warning': this.attributes.warning,
+      'error':   this.attributes.error,
+      'note':    !(this.attributes.error &&
+                   this.attributes.warning),
+    }
+  }
+
+  yipChildStyles() {
+    return '#my-note-styles';
+  }
+  
+}
+
+yip.add('my-note', Note);
+
+class TemplateNote extends yip.Element {
+
+  yipRenderTemplate(input) {
+    return doT.template(input)({'element': this});
+  }
+
+  yipChildStyles() {
+    return '#my-note-styles';
+  }
+
+  yipChildTemplate() {
+    return '#my-note-template';
+  }
+
+  yipChildClasses() {
+    return {
+      'my-note': true,
+      'warning': this.attributes.warning,
+      'error': this.attributes.error,
+      'note': !(this.attributes.error &&
+                this.attributes.warning),
+    }
+  }
+
+  yipConnect() {
+    for (let elem of this.yipChild.querySelectorAll('button')) {
+      elem.addEventListener('click', (ev) => {
+        this.yipEmit('action-clicked');
+      });
+    }
+  }
+
+}
+
+yip.add('my-note-2', TemplateNote);
+
+for (let el of document.querySelectorAll('my-note-2')) {
+  el.addEventListener('action-clicked', console.log);
+}
+
+
+</script>
+
+</body>
+
+
+</html>
