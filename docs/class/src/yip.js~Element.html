@@ -10,7 +10,6 @@
   
   
   <script src="script/manual.js"></script>
-<script data-ice="userScript" src="user/script/0-yipUi.js"></script>
 </head>
 <body class="layout-container" data-ice="rootContainer">
 
@@ -20,7 +19,7 @@
   <a href="identifiers.html">Reference</a>
   <a href="source.html">Source</a>
   
-  
+  <a data-ice="repoURL" href="https://github.com/aliafshar/yip" class="repo-url-github">Repository</a>
   <div class="search-box">
   <span>
     <img src="./image/search.png">
@@ -40,13 +39,13 @@
 </nav>
 
 <div class="content" data-ice="content"><div class="header-notice">
-  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {Element} from &apos;<span><a href="file/src/yip.js.html#lineNumber34">./src/yip.js</a></span>&apos;</code></pre></div>
+  <div data-ice="importPath" class="import-path"><pre class="prettyprint"><code data-ice="importPathCode">import {Element} from &apos;<span><a href="file/src/yip.js.html#lineNumber29">yip/src/yip.js</a></span>&apos;</code></pre></div>
   <span data-ice="access">public</span>
   <span data-ice="kind">class</span>
   
   
   
-  <span data-ice="source">| <span><a href="file/src/yip.js.html#lineNumber34">source</a></span></span>
+  <span data-ice="source">| <span><a href="file/src/yip.js.html#lineNumber29">source</a></span></span>
 </div>
 
 <div class="self-detail detail">
@@ -67,9 +66,11 @@
   
   
   <div class="description" data-ice="description"><p>Yip element class.</p>
-<p>You can subclass this if you want, but then you will need to handle
-registration youself.</p>
-<p>Yip can create an element that uses the specific controller you pass.</p>
+<p>You should subclass this to create a new element type to add DOM, behaviour,
+styling, etc.</p>
+<p>Configuring your element is done exclusively with overriding methods that
+return options. Yes, this might seem annoying, but it is unambiguously the
+one way to do it in this library.</p>
 </div>
 
   
@@ -104,7 +105,8 @@ registration youself.</p>
       <div>
         
         
-        
+        <div data-ice="description"><p>Creates a new Element.</p>
+</div>
       </div>
     </td>
     <td>
@@ -177,6 +179,31 @@ registration youself.</p>
   <tbody>
   
   <tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+           <span data-ice="name"><span><a href="class/src/yip.js~Element.html#instance-method-connectedCallback">connectedCallback</a></span></span><span data-ice="signature">()</span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
+<tr data-ice="target">
     <td>
       <span class="access" data-ice="access">public</span>
       
@@ -265,13 +292,20 @@ registration youself.</p>
     <td>
       <div>
         <p>
-           <span data-ice="name"><span><a href="class/src/yip.js~Element.html#instance-method-yipBuildElementChild">yipBuildElementChild</a></span></span><span data-ice="signature">(): <span>*</span></span>
+           <span data-ice="name"><span><a href="class/src/yip.js~Element.html#instance-method-yipBuildElementChild">yipBuildElementChild</a></span></span><span data-ice="signature">(): <span>HTMLElement</span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>Called to create the Element&apos;s entire DOM.</p>
+<p>Override this to create a more complicated DOM than just a single element.
+The default implementation creates a single element of <span><a href="class/src/yip.js~Element.html#instance-method-yipChildName">yipChildName</a></span>
+but any DOM can be used.</p>
+<p>You should also be responsible for creating a slot element as a child if
+you wish your custom element to have child nodes.</p>
+<p><strong>Note: If a template is defined, this method will not be called.</strong></p>
+</div>
       </div>
     </td>
     <td>
@@ -321,7 +355,8 @@ registration youself.</p>
       <div>
         
         
-        
+        <div data-ice="description"><p>Called to build the slot for an element.</p>
+</div>
       </div>
     </td>
     <td>
@@ -346,7 +381,8 @@ registration youself.</p>
       <div>
         
         
-        
+        <div data-ice="description"><p>Called to build the child element from a template.</p>
+</div>
       </div>
     </td>
     <td>
@@ -398,7 +434,8 @@ element.</p>
       <div>
         
         
-        
+        <div data-ice="description"><p>Called when building a child element to get its name.</p>
+</div>
       </div>
     </td>
     <td>
@@ -442,13 +479,14 @@ element.</p>
     <td>
       <div>
         <p>
-           <span data-ice="name"><span><a href="class/src/yip.js~Element.html#instance-method-yipChildTemplate">yipChildTemplate</a></span></span><span data-ice="signature">(): <span>*</span></span>
+           <span data-ice="name"><span><a href="class/src/yip.js~Element.html#instance-method-yipChildTemplate">yipChildTemplate</a></span></span><span data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
         </p>
       </div>
       <div>
         
         
-        
+        <div data-ice="description"><p>Called to get the template element selector.</p>
+</div>
       </div>
     </td>
     <td>
@@ -532,6 +570,31 @@ element.</p>
       
     </td>
   </tr>
+<tr data-ice="target">
+    <td>
+      <span class="access" data-ice="access">public</span>
+      
+      
+      
+      <span class="override" data-ice="override"></span>
+    </td>
+    <td>
+      <div>
+        <p>
+           <span data-ice="name"><span><a href="class/src/yip.js~Element.html#instance-method-yipUpdate">yipUpdate</a></span></span><span data-ice="signature">()</span>
+        </p>
+      </div>
+      <div>
+        
+        
+        
+      </div>
+    </td>
+    <td>
+      
+      
+    </td>
+  </tr>
 </tbody>
 </table>
 </div>
@@ -553,14 +616,17 @@ element.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/yip.js.html#lineNumber36">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/yip.js.html#lineNumber37">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Creates a new Element.</p>
+<p>This constructor is never called directly. Instead, use {@link
+document.createElement(&apos;my-element-name&apos;) }</p>
+</div>
 
   
 
@@ -596,7 +662,7 @@ element.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/yip.js.html#lineNumber39">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/yip.js.html#lineNumber40">source</a></span></span>
     </span>
   </h3>
 
@@ -636,7 +702,7 @@ element.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/yip.js.html#lineNumber38">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/yip.js.html#lineNumber39">source</a></span></span>
     </span>
   </h3>
 
@@ -669,6 +735,46 @@ element.</p>
 <div data-ice="methodDetails"><h2 data-ice="title">Public Methods</h2>
 
 <div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-method-connectedCallback">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    <span data-ice="name">connectedCallback</span><span data-ice="signature">()</span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/yip.js.html#lineNumber47">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties">
+</div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
   <h3 data-ice="anchor" id="instance-method-yipApplyClasses">
     <span class="access" data-ice="access">public</span>
     
@@ -679,7 +785,7 @@ element.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/yip.js.html#lineNumber63">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/yip.js.html#lineNumber80">source</a></span></span>
     </span>
   </h3>
 
@@ -720,7 +826,7 @@ element.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/yip.js.html#lineNumber75">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/yip.js.html#lineNumber92">source</a></span></span>
     </span>
   </h3>
 
@@ -777,7 +883,7 @@ element.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/yip.js.html#lineNumber96">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/yip.js.html#lineNumber112">source</a></span></span>
     </span>
   </h3>
 
@@ -826,18 +932,25 @@ the <code>&lt;slot&gt;&lt;/slot&gt;</code> element as a child.</p>
     
     
     
-    <span data-ice="name">yipBuildElementChild</span><span data-ice="signature">(): <span>*</span></span>
+    <span data-ice="name">yipBuildElementChild</span><span data-ice="signature">(): <span>HTMLElement</span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/yip.js.html#lineNumber127">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/yip.js.html#lineNumber159">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Called to create the Element&apos;s entire DOM.</p>
+<p>Override this to create a more complicated DOM than just a single element.
+The default implementation creates a single element of <span><a href="class/src/yip.js~Element.html#instance-method-yipChildName">yipChildName</a></span>
+but any DOM can be used.</p>
+<p>You should also be responsible for creating a slot element as a child if
+you wish your custom element to have child nodes.</p>
+<p><strong>Note: If a template is defined, this method will not be called.</strong></p>
+</div>
 
   
 
@@ -848,8 +961,9 @@ the <code>&lt;slot&gt;&lt;/slot&gt;</code> element as a child.</p>
     <h4>Return:</h4>
     <table>
       <tr>
-        <td class="return-type" data-ice="returnType"><span>*</span></td>
-        
+        <td class="return-type" data-ice="returnType"><span>HTMLElement</span></td>
+        <td class="return-desc" data-ice="returnDescription"><p>The newly created DOM.</p>
+</td>
       </tr>
     </table>
     <div data-ice="returnProperties">
@@ -880,7 +994,7 @@ the <code>&lt;slot&gt;&lt;/slot&gt;</code> element as a child.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/yip.js.html#lineNumber86">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/yip.js.html#lineNumber102">source</a></span></span>
     </span>
   </h3>
 
@@ -930,14 +1044,17 @@ the <code>&lt;slot&gt;&lt;/slot&gt;</code> element as a child.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/yip.js.html#lineNumber132">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/yip.js.html#lineNumber171">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Called to build the slot for an element.</p>
+<p>The default implementation is called by <span><a href="class/src/yip.js~Element.html#instance-method-yipBuildChild">yipBuildChild</a></span> and produces
+a single <code>&lt;slot&gt;&lt;/slot&gt;</code> element as the child of the child.</p>
+</div>
 
   
 
@@ -980,14 +1097,15 @@ the <code>&lt;slot&gt;&lt;/slot&gt;</code> element as a child.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/yip.js.html#lineNumber111">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/yip.js.html#lineNumber129">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Called to build the child element from a template.</p>
+</div>
 
   
 
@@ -1030,7 +1148,7 @@ the <code>&lt;slot&gt;&lt;/slot&gt;</code> element as a child.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/yip.js.html#lineNumber154">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/yip.js.html#lineNumber196">source</a></span></span>
     </span>
   </h3>
 
@@ -1086,14 +1204,15 @@ apply the class or not.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/yip.js.html#lineNumber136">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/yip.js.html#lineNumber178">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Called when building a child element to get its name.</p>
+</div>
 
   
 
@@ -1136,7 +1255,7 @@ apply the class or not.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/yip.js.html#lineNumber140">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/yip.js.html#lineNumber182">source</a></span></span>
     </span>
   </h3>
 
@@ -1182,18 +1301,22 @@ apply the class or not.</p>
     
     
     
-    <span data-ice="name">yipChildTemplate</span><span data-ice="signature">(): <span>*</span></span>
+    <span data-ice="name">yipChildTemplate</span><span data-ice="signature">(): <span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></span>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/yip.js.html#lineNumber56">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/yip.js.html#lineNumber70">source</a></span></span>
     </span>
   </h3>
 
   
   
   
-  
+  <div data-ice="description"><p>Called to get the template element selector.</p>
+<p>Override it to use a template for creating the DOM instead building the
+element. The function should return a selector, usually an ID makes
+most sense here. If you don&apos;t wants to use a template, just ignore this.</p>
+</div>
 
   
 
@@ -1204,8 +1327,10 @@ apply the class or not.</p>
     <h4>Return:</h4>
     <table>
       <tr>
-        <td class="return-type" data-ice="returnType"><span>*</span></td>
-        
+        <td class="return-type" data-ice="returnType"><span><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String">string</a></span></td>
+        <td class="return-desc" data-ice="returnDescription"><p>The selector for the template element to use. OR null to
+imply that there will be no template and DOM will be created manually.</p>
+</td>
       </tr>
     </table>
     <div data-ice="returnProperties">
@@ -1236,7 +1361,7 @@ apply the class or not.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/yip.js.html#lineNumber158">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/yip.js.html#lineNumber200">source</a></span></span>
     </span>
   </h3>
 
@@ -1276,7 +1401,7 @@ apply the class or not.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/yip.js.html#lineNumber161">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/yip.js.html#lineNumber203">source</a></span></span>
     </span>
   </h3>
 
@@ -1332,7 +1457,7 @@ apply the class or not.</p>
     <span class="right-info">
       
       
-      <span data-ice="source"><span><a href="file/src/yip.js.html#lineNumber52">source</a></span></span>
+      <span data-ice="source"><span><a href="file/src/yip.js.html#lineNumber56">source</a></span></span>
     </span>
   </h3>
 
@@ -1376,6 +1501,46 @@ interpolation.</p>
     <div data-ice="returnProperties">
 </div>
   </div>
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+</div>
+<div class="detail" data-ice="detail">
+  <h3 data-ice="anchor" id="instance-method-yipUpdate">
+    <span class="access" data-ice="access">public</span>
+    
+    
+    
+    
+    <span data-ice="name">yipUpdate</span><span data-ice="signature">()</span>
+    <span class="right-info">
+      
+      
+      <span data-ice="source"><span><a href="file/src/yip.js.html#lineNumber74">source</a></span></span>
+    </span>
+  </h3>
+
+  
+  
+  
+  
+
+  
+
+  <div data-ice="properties">
+</div>
+
+  
 
   
 

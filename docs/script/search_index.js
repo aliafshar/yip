@@ -1,14 +1,14 @@
 window.esdocSearchIndex = [
   [
-    "./src/yip.js~element",
+    "yip/src/yip.js~element",
     "class/src/yip.js~Element.html",
-    "<span>Element</span> <span class=\"search-result-import-path\">./src/yip.js</span>",
+    "<span>Element</span> <span class=\"search-result-import-path\">yip/src/yip.js</span>",
     "class"
   ],
   [
-    "./src/yip.js~add",
+    "yip/src/yip.js~add",
     "function/index.html#static-function-add",
-    "<span>add</span> <span class=\"search-result-import-path\">./src/yip.js</span>",
+    "<span>add</span> <span class=\"search-result-import-path\">yip/src/yip.js</span>",
     "function"
   ],
   [
@@ -348,6 +348,12 @@ window.esdocSearchIndex = [
     "file"
   ],
   [
+    "src/yip.js~element#connectedcallback",
+    "class/src/yip.js~Element.html#instance-method-connectedCallback",
+    "src/yip.js~Element#connectedCallback",
+    "method"
+  ],
+  [
     "src/yip.js~element#constructor",
     "class/src/yip.js~Element.html#instance-constructor-constructor",
     "src/yip.js~Element#constructor",
@@ -448,5 +454,11 @@ window.esdocSearchIndex = [
     "class/src/yip.js~Element.html#instance-member-yipRoot",
     "src/yip.js~Element#yipRoot",
     "member"
+  ],
+  [
+    "src/yip.js~element#yipupdate",
+    "class/src/yip.js~Element.html#instance-method-yipUpdate",
+    "src/yip.js~Element#yipUpdate",
+    "method"
   ]
 ]

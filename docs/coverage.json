@@ -1,24 +1,20 @@
 {
-  "coverage": "36.84%",
-  "expectCount": 19,
-  "actualCount": 7,
+  "coverage": "61.9%",
+  "expectCount": 21,
+  "actualCount": 13,
   "files": {
     "src/yip.js": {
-      "expectCount": 19,
-      "actualCount": 7,
+      "expectCount": 21,
+      "actualCount": 13,
       "undocumentLines": [
-        36,
-        127,
-        86,
-        132,
-        111,
+        47,
+        102,
+        40,
+        182,
+        200,
+        203,
         39,
-        136,
-        140,
-        56,
-        158,
-        161,
-        38
+        74
       ]
     }
   }

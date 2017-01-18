@@ -14,25 +14,26 @@
  * limitations under the License.
  */
 
- /**
- * @fileoverview
- *
- * Yip is a micro (read featureless) library for creating custom elements.
- *
- * https://github.com/aliafshar/yip
- */
-
 
 /**
  * Yip element class.
  *
- * You can subclass this if you want, but then you will need to handle
- * registration youself.
+ * You should subclass this to create a new element type to add DOM, behaviour,
+ * styling, etc.
  *
- * Yip can create an element that uses the specific controller you pass.
+ * Configuring your element is done exclusively with overriding methods that
+ * return options. Yes, this might seem annoying, but it is unambiguously the
+ * one way to do it in this library.
+ *
  */
 export class Element extends HTMLElement {
 
+  /**
+   * Creates a new Element.
+   *
+   * This constructor is never called directly. Instead, use {@link
+   * document.createElement('my-element-name') }
+   */
   constructor() {
     super();
     this.yipRoot = this.yipBuildRoot();
@@ -43,6 +44,9 @@ export class Element extends HTMLElement {
     this.yipRoot.append(this.yipChild);
   }
 
+  connectedCallback() {
+  }
+
   /**
    * Called to transform a template.
    *
@@ -50,11 +54,24 @@ export class Element extends HTMLElement {
    * interpolation.
    */
   yipRenderTemplate(input) {
-    return output;
+    return input;
   }
 
+  /**
+   * Called to get the template element selector.
+   *
+   * Override it to use a template for creating the DOM instead building the
+   * element. The function should return a selector, usually an ID makes
+   * most sense here. If you don't wants to use a template, just ignore this.
+   *
+   * @return {string} The selector for the template element to use. OR null to
+   * imply that there will be no template and DOM will be created manually.
+   */
   yipChildTemplate() {
     return null;
+  }
+
+  yipUpdate() {
   }
   
   /**
@@ -82,7 +99,6 @@ export class Element extends HTMLElement {
     }
   }
 
-
   yipBuildRoot() {
     return this.attachShadow({mode: 'open'});
   }
@@ -103,11 +119,13 @@ export class Element extends HTMLElement {
       return child;
     } else {
       const child = this.yipBuildElementChild();
-      child.append(this.yipBuildSlot());
       return child;
     }
   }
 
+  /**
+   * Called to build the child element from a template.
+   */
   yipBuildTemplateChild() {
     const childTemplate = document.querySelector(this.yipChildTemplate());
     if (childTemplate) {
@@ -116,7 +134,7 @@ export class Element extends HTMLElement {
         return;
       }
       const copyTemplate = childTemplate.cloneNode(true);
-      copyTemplate.innerHTML = this.yipRenderTemplate(copyTemplate.innerHTML);
+      copyTemplate.innerHTML = this.yipRenderTemplate(childTemplate.innerHTML);
       return copyTemplate.content.children[0].cloneNode(true);
     } else {
       console.warn('Template not found.', this.yipChildTemplate());
@@ -124,15 +142,39 @@ export class Element extends HTMLElement {
     }
   }
 
+  /**
+   * Called to create the Element's entire DOM.
+   *
+   * Override this to create a more complicated DOM than just a single element.
+   * The default implementation creates a single element of {@link yipChildName}
+   * but any DOM can be used.
+   *
+   * You should also be responsible for creating a slot element as a child if
+   * you wish your custom element to have child nodes.
+   *
+   * **Note: If a template is defined, this method will not be called.**
+   *
+   * @return {HTMLElement} The newly created DOM.
+   */
   yipBuildElementChild() {
-    return document.createElement(this.yipChildName());
+    const el = document.createElement(this.yipChildName());
+    el.append(this.yipBuildSlot());
+    return el;
   }
 
-
+  /**
+   * Called to build the slot for an element.
+   *
+   * The default implementation is called by {@link yipBuildChild} and produces
+   * a single `<slot></slot>` element as the child of the child.
+   */
   yipBuildSlot() {
     return document.createElement('slot');
   }
 
+  /**
+   * Called when building a child element to get its name.
+   */
   yipChildName() {
     return 'div';
   }

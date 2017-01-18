@@ -1,6 +1,6 @@
 # yip
 
-**Tiny custom elements for the web.** Yip is a JavaScript library which supports:
+**Tiny custom elements for the web.** Yip is a JavaScript library/demo which supports:
 
 * Registering new custom elements elements
 * Using `<template>` for element templates
@@ -8,6 +8,9 @@
 * Building an element in shadow dom
 * Scoped styles
 * Custom events
+
+Note: Yip uses Custom Elements v1 API. Polyfilling that to older browsers is
+left as an exercise for the brave user.
 
 
 ### Quick
@@ -180,7 +183,7 @@ Elements should emit events. You can easily dispatch an event on your custom
 element, like:
 
 ```
-el.addEventListener('action-clicked', function() { //... });
+el.addEventListener('action-clicked', () => {});
 el.yipEmit('action-clicked');
 ```
 

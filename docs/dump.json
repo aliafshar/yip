@@ -9,8 +9,8 @@
     "longname": "src/yip.js",
     "access": null,
     "description": null,
-    "lineNumber": 34,
-    "content": "/**\n * Copyright 2016 Google Inc.\n *\n * Licensed under the Apache License, Version 2.0 (the \"License\");\n * you may not use this file except in compliance with the License.\n * You may obtain a copy of the License at\n *\n *   http://www.apache.org/licenses/LICENSE-2.0\n *\n * Unless required by applicable law or agreed to in writing, software\n * distributed under the License is distributed on an \"AS IS\" BASIS,\n * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n * See the License for the specific language governing permissions and\n * limitations under the License.\n */\n\n /**\n * @fileoverview\n *\n * Yip is a micro (read featureless) library for creating custom elements.\n *\n * https://github.com/aliafshar/yip\n */\n\n\n/**\n * Yip element class.\n *\n * You can subclass this if you want, but then you will need to handle\n * registration youself.\n *\n * Yip can create an element that uses the specific controller you pass.\n */\nexport class Element extends HTMLElement {\n\n  constructor() {\n    super();\n    this.yipRoot = this.yipBuildRoot();\n    this.yipChild = this.yipBuildChild();\n    this.yipApplyClasses();\n    this.yipApplyStyles();\n    this.yipConnect();\n    this.yipRoot.append(this.yipChild);\n  }\n\n  /**\n   * Called to transform a template.\n   *\n   * Override it to add your own templating system if you want to do\n   * interpolation.\n   */\n  yipRenderTemplate(input) {\n    return output;\n  }\n\n  yipChildTemplate() {\n    return null;\n  }\n  \n  /**\n   * Apply the configured classes the the child element.\n   */\n  yipApplyClasses() {\n    const classes = this.yipChildClasses();\n    for (let className in classes) {\n      if (classes[className]) {\n        this.yipChild.classList.add(className);\n      }\n    }\n  }\n\n  /**\n   * Apply the configured style sheets the the child element.\n   */\n  yipApplyStyles(styles) {\n    const styleSelector = this.yipChildStyles();\n    if (styleSelector) {\n      const styleNode = document.querySelector(styleSelector);\n      const newStyleNode = styleNode.cloneNode(true);\n      newStyleNode.id = '';\n      this.yipRoot.append(newStyleNode);\n    }\n  }\n\n\n  yipBuildRoot() {\n    return this.attachShadow({mode: 'open'});\n  }\n\n  /**\n   * Called to build the element that is attached to the DOM.\n   *\n   * If overriding, you must ensure that if you want child elements, to attach\n   * the `<slot></slot>` element as a child.\n   */\n  yipBuildChild() {\n    if (this.yipChildTemplate()) {\n      let child = this.yipBuildTemplateChild();\n      if (!child) {\n        child = document.createElement('div');\n        child.textContent = 'template error';\n      }\n      return child;\n    } else {\n      const child = this.yipBuildElementChild();\n      child.append(this.yipBuildSlot());\n      return child;\n    }\n  }\n\n  yipBuildTemplateChild() {\n    const childTemplate = document.querySelector(this.yipChildTemplate());\n    if (childTemplate) {\n      if (childTemplate.content.children.length != 1) {\n        console.warn('Template has != 1 children');\n        return;\n      }\n      const copyTemplate = childTemplate.cloneNode(true);\n      copyTemplate.innerHTML = this.yipRenderTemplate(copyTemplate.innerHTML);\n      return copyTemplate.content.children[0].cloneNode(true);\n    } else {\n      console.warn('Template not found.', this.yipChildTemplate());\n      return;\n    }\n  }\n\n  yipBuildElementChild() {\n    return document.createElement(this.yipChildName());\n  }\n\n\n  yipBuildSlot() {\n    return document.createElement('slot');\n  }\n\n  yipChildName() {\n    return 'div';\n  }\n\n  yipChildStyles() {\n    return null;\n  }\n\n  /**\n   * Called to retrieve a list of classes that will be applied to the shadow\n   * element.\n   *\n   * All of the custom element's definition is available, and can be used to\n   * conditionally add classes to the child element.\n   *\n   * @return {object} Mapping class names to a boolean value of whether to\n   * apply the class or not.\n   */\n  yipChildClasses() {\n    return {};\n  }\n\n  yipConnect() {\n  }\n\n  yipEmit(name) {\n    this.dispatchEvent(new Event(name));\n  }\n\n}\n\n\n/**\n * Add a new Yip Element.\n *\n * @param {String} elementName\n *\n *   The name of the element to register\n *\n * @param {class} controllerType\n *\n *   The type of the controller.\n *\n */\nexport function add(elementName, elementType) {\n  customElements.define(elementName, elementType);\n  return elementType;\n}\n\n"
+    "lineNumber": 29,
+    "content": "/**\n * Copyright 2016 Google Inc.\n *\n * Licensed under the Apache License, Version 2.0 (the \"License\");\n * you may not use this file except in compliance with the License.\n * You may obtain a copy of the License at\n *\n *   http://www.apache.org/licenses/LICENSE-2.0\n *\n * Unless required by applicable law or agreed to in writing, software\n * distributed under the License is distributed on an \"AS IS\" BASIS,\n * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.\n * See the License for the specific language governing permissions and\n * limitations under the License.\n */\n\n\n/**\n * Yip element class.\n *\n * You should subclass this to create a new element type to add DOM, behaviour,\n * styling, etc.\n *\n * Configuring your element is done exclusively with overriding methods that\n * return options. Yes, this might seem annoying, but it is unambiguously the\n * one way to do it in this library.\n *\n */\nexport class Element extends HTMLElement {\n\n  /**\n   * Creates a new Element.\n   *\n   * This constructor is never called directly. Instead, use {@link\n   * document.createElement('my-element-name') }\n   */\n  constructor() {\n    super();\n    this.yipRoot = this.yipBuildRoot();\n    this.yipChild = this.yipBuildChild();\n    this.yipApplyClasses();\n    this.yipApplyStyles();\n    this.yipConnect();\n    this.yipRoot.append(this.yipChild);\n  }\n\n  connectedCallback() {\n  }\n\n  /**\n   * Called to transform a template.\n   *\n   * Override it to add your own templating system if you want to do\n   * interpolation.\n   */\n  yipRenderTemplate(input) {\n    return input;\n  }\n\n  /**\n   * Called to get the template element selector.\n   *\n   * Override it to use a template for creating the DOM instead building the\n   * element. The function should return a selector, usually an ID makes\n   * most sense here. If you don't wants to use a template, just ignore this.\n   *\n   * @return {string} The selector for the template element to use. OR null to\n   * imply that there will be no template and DOM will be created manually.\n   */\n  yipChildTemplate() {\n    return null;\n  }\n\n  yipUpdate() {\n  }\n  \n  /**\n   * Apply the configured classes the the child element.\n   */\n  yipApplyClasses() {\n    const classes = this.yipChildClasses();\n    for (let className in classes) {\n      if (classes[className]) {\n        this.yipChild.classList.add(className);\n      }\n    }\n  }\n\n  /**\n   * Apply the configured style sheets the the child element.\n   */\n  yipApplyStyles(styles) {\n    const styleSelector = this.yipChildStyles();\n    if (styleSelector) {\n      const styleNode = document.querySelector(styleSelector);\n      const newStyleNode = styleNode.cloneNode(true);\n      newStyleNode.id = '';\n      this.yipRoot.append(newStyleNode);\n    }\n  }\n\n  yipBuildRoot() {\n    return this.attachShadow({mode: 'open'});\n  }\n\n  /**\n   * Called to build the element that is attached to the DOM.\n   *\n   * If overriding, you must ensure that if you want child elements, to attach\n   * the `<slot></slot>` element as a child.\n   */\n  yipBuildChild() {\n    if (this.yipChildTemplate()) {\n      let child = this.yipBuildTemplateChild();\n      if (!child) {\n        child = document.createElement('div');\n        child.textContent = 'template error';\n      }\n      return child;\n    } else {\n      const child = this.yipBuildElementChild();\n      return child;\n    }\n  }\n\n  /**\n   * Called to build the child element from a template.\n   */\n  yipBuildTemplateChild() {\n    const childTemplate = document.querySelector(this.yipChildTemplate());\n    if (childTemplate) {\n      if (childTemplate.content.children.length != 1) {\n        console.warn('Template has != 1 children');\n        return;\n      }\n      const copyTemplate = childTemplate.cloneNode(true);\n      copyTemplate.innerHTML = this.yipRenderTemplate(childTemplate.innerHTML);\n      return copyTemplate.content.children[0].cloneNode(true);\n    } else {\n      console.warn('Template not found.', this.yipChildTemplate());\n      return;\n    }\n  }\n\n  /**\n   * Called to create the Element's entire DOM.\n   *\n   * Override this to create a more complicated DOM than just a single element.\n   * The default implementation creates a single element of {@link yipChildName}\n   * but any DOM can be used.\n   *\n   * You should also be responsible for creating a slot element as a child if\n   * you wish your custom element to have child nodes.\n   *\n   * **Note: If a template is defined, this method will not be called.**\n   *\n   * @return {HTMLElement} The newly created DOM.\n   */\n  yipBuildElementChild() {\n    const el = document.createElement(this.yipChildName());\n    el.append(this.yipBuildSlot());\n    return el;\n  }\n\n  /**\n   * Called to build the slot for an element.\n   *\n   * The default implementation is called by {@link yipBuildChild} and produces\n   * a single `<slot></slot>` element as the child of the child.\n   */\n  yipBuildSlot() {\n    return document.createElement('slot');\n  }\n\n  /**\n   * Called when building a child element to get its name.\n   */\n  yipChildName() {\n    return 'div';\n  }\n\n  yipChildStyles() {\n    return null;\n  }\n\n  /**\n   * Called to retrieve a list of classes that will be applied to the shadow\n   * element.\n   *\n   * All of the custom element's definition is available, and can be used to\n   * conditionally add classes to the child element.\n   *\n   * @return {object} Mapping class names to a boolean value of whether to\n   * apply the class or not.\n   */\n  yipChildClasses() {\n    return {};\n  }\n\n  yipConnect() {\n  }\n\n  yipEmit(name) {\n    this.dispatchEvent(new Event(name));\n  }\n\n}\n\n\n/**\n * Add a new Yip Element.\n *\n * @param {String} elementName\n *\n *   The name of the element to register\n *\n * @param {class} controllerType\n *\n *   The type of the controller.\n *\n */\nexport function add(elementName, elementType) {\n  customElements.define(elementName, elementType);\n  return elementType;\n}\n\n"
   },
   {
     "__docId__": 1,
@@ -22,10 +22,10 @@
     "longname": "src/yip.js~Element",
     "access": null,
     "export": true,
-    "importPath": "./src/yip.js",
+    "importPath": "yip/src/yip.js",
     "importStyle": "{Element}",
-    "description": "Yip element class.\n\nYou can subclass this if you want, but then you will need to handle\nregistration youself.\n\nYip can create an element that uses the specific controller you pass.",
-    "lineNumber": 34,
+    "description": "Yip element class.\n\nYou should subclass this to create a new element type to add DOM, behaviour,\nstyling, etc.\n\nConfiguring your element is done exclusively with overriding methods that\nreturn options. Yes, this might seem annoying, but it is unambiguously the\none way to do it in this library.",
+    "lineNumber": 29,
     "interface": false,
     "extends": [
       "HTMLElement"
@@ -40,9 +40,8 @@
     "memberof": "src/yip.js~Element",
     "longname": "src/yip.js~Element#constructor",
     "access": null,
-    "description": null,
-    "lineNumber": 36,
-    "undocument": true,
+    "description": "Creates a new Element.\n\nThis constructor is never called directly. Instead, use {@link\ndocument.createElement('my-element-name') }",
+    "lineNumber": 37,
     "params": [],
     "generator": false
   },
@@ -56,7 +55,7 @@
     "longname": "src/yip.js~Element#yipRoot",
     "access": null,
     "description": null,
-    "lineNumber": 38,
+    "lineNumber": 39,
     "undocument": true,
     "type": {
       "types": [
@@ -74,7 +73,7 @@
     "longname": "src/yip.js~Element#yipChild",
     "access": null,
     "description": null,
-    "lineNumber": 39,
+    "lineNumber": 40,
     "undocument": true,
     "type": {
       "types": [
@@ -87,12 +86,27 @@
     "kind": "method",
     "static": false,
     "variation": null,
+    "name": "connectedCallback",
+    "memberof": "src/yip.js~Element",
+    "longname": "src/yip.js~Element#connectedCallback",
+    "access": null,
+    "description": null,
+    "lineNumber": 47,
+    "undocument": true,
+    "params": [],
+    "generator": false
+  },
+  {
+    "__docId__": 6,
+    "kind": "method",
+    "static": false,
+    "variation": null,
     "name": "yipRenderTemplate",
     "memberof": "src/yip.js~Element",
     "longname": "src/yip.js~Element#yipRenderTemplate",
     "access": null,
     "description": "Called to transform a template.\n\nOverride it to add your own templating system if you want to do\ninterpolation.",
-    "lineNumber": 52,
+    "lineNumber": 56,
     "params": [
       {
         "name": "input",
@@ -109,7 +123,7 @@
     "generator": false
   },
   {
-    "__docId__": 6,
+    "__docId__": 7,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -117,19 +131,36 @@
     "memberof": "src/yip.js~Element",
     "longname": "src/yip.js~Element#yipChildTemplate",
     "access": null,
-    "description": null,
-    "lineNumber": 56,
-    "undocument": true,
+    "description": "Called to get the template element selector.\n\nOverride it to use a template for creating the DOM instead building the\nelement. The function should return a selector, usually an ID makes\nmost sense here. If you don't wants to use a template, just ignore this.",
+    "lineNumber": 70,
     "params": [],
     "return": {
+      "nullable": null,
       "types": [
-        "*"
-      ]
+        "string"
+      ],
+      "spread": false,
+      "description": "The selector for the template element to use. OR null to\nimply that there will be no template and DOM will be created manually."
     },
     "generator": false
   },
   {
-    "__docId__": 7,
+    "__docId__": 8,
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "yipUpdate",
+    "memberof": "src/yip.js~Element",
+    "longname": "src/yip.js~Element#yipUpdate",
+    "access": null,
+    "description": null,
+    "lineNumber": 74,
+    "undocument": true,
+    "params": [],
+    "generator": false
+  },
+  {
+    "__docId__": 9,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -138,12 +169,12 @@
     "longname": "src/yip.js~Element#yipApplyClasses",
     "access": null,
     "description": "Apply the configured classes the the child element.",
-    "lineNumber": 63,
+    "lineNumber": 80,
     "params": [],
     "generator": false
   },
   {
-    "__docId__": 8,
+    "__docId__": 10,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -152,7 +183,7 @@
     "longname": "src/yip.js~Element#yipApplyStyles",
     "access": null,
     "description": "Apply the configured style sheets the the child element.",
-    "lineNumber": 75,
+    "lineNumber": 92,
     "params": [
       {
         "name": "styles",
@@ -164,7 +195,7 @@
     "generator": false
   },
   {
-    "__docId__": 9,
+    "__docId__": 11,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -173,46 +204,7 @@
     "longname": "src/yip.js~Element#yipBuildRoot",
     "access": null,
     "description": null,
-    "lineNumber": 86,
-    "undocument": true,
-    "params": [],
-    "return": {
-      "types": [
-        "*"
-      ]
-    },
-    "generator": false
-  },
-  {
-    "__docId__": 10,
-    "kind": "method",
-    "static": false,
-    "variation": null,
-    "name": "yipBuildChild",
-    "memberof": "src/yip.js~Element",
-    "longname": "src/yip.js~Element#yipBuildChild",
-    "access": null,
-    "description": "Called to build the element that is attached to the DOM.\n\nIf overriding, you must ensure that if you want child elements, to attach\nthe `<slot></slot>` element as a child.",
-    "lineNumber": 96,
-    "params": [],
-    "return": {
-      "types": [
-        "*"
-      ]
-    },
-    "generator": false
-  },
-  {
-    "__docId__": 11,
-    "kind": "method",
-    "static": false,
-    "variation": null,
-    "name": "yipBuildTemplateChild",
-    "memberof": "src/yip.js~Element",
-    "longname": "src/yip.js~Element#yipBuildTemplateChild",
-    "access": null,
-    "description": null,
-    "lineNumber": 111,
+    "lineNumber": 102,
     "undocument": true,
     "params": [],
     "return": {
@@ -227,13 +219,12 @@
     "kind": "method",
     "static": false,
     "variation": null,
-    "name": "yipBuildElementChild",
+    "name": "yipBuildChild",
     "memberof": "src/yip.js~Element",
-    "longname": "src/yip.js~Element#yipBuildElementChild",
+    "longname": "src/yip.js~Element#yipBuildChild",
     "access": null,
-    "description": null,
-    "lineNumber": 127,
-    "undocument": true,
+    "description": "Called to build the element that is attached to the DOM.\n\nIf overriding, you must ensure that if you want child elements, to attach\nthe `<slot></slot>` element as a child.",
+    "lineNumber": 112,
     "params": [],
     "return": {
       "types": [
@@ -247,13 +238,12 @@
     "kind": "method",
     "static": false,
     "variation": null,
-    "name": "yipBuildSlot",
+    "name": "yipBuildTemplateChild",
     "memberof": "src/yip.js~Element",
-    "longname": "src/yip.js~Element#yipBuildSlot",
+    "longname": "src/yip.js~Element#yipBuildTemplateChild",
     "access": null,
-    "description": null,
-    "lineNumber": 132,
-    "undocument": true,
+    "description": "Called to build the child element from a template.",
+    "lineNumber": 129,
     "params": [],
     "return": {
       "types": [
@@ -267,18 +257,20 @@
     "kind": "method",
     "static": false,
     "variation": null,
-    "name": "yipChildName",
+    "name": "yipBuildElementChild",
     "memberof": "src/yip.js~Element",
-    "longname": "src/yip.js~Element#yipChildName",
+    "longname": "src/yip.js~Element#yipBuildElementChild",
     "access": null,
-    "description": null,
-    "lineNumber": 136,
-    "undocument": true,
+    "description": "Called to create the Element's entire DOM.\n\nOverride this to create a more complicated DOM than just a single element.\nThe default implementation creates a single element of {@link yipChildName}\nbut any DOM can be used.\n\nYou should also be responsible for creating a slot element as a child if\nyou wish your custom element to have child nodes.\n\n**Note: If a template is defined, this method will not be called.**",
+    "lineNumber": 159,
     "params": [],
     "return": {
+      "nullable": null,
       "types": [
-        "string"
-      ]
+        "HTMLElement"
+      ],
+      "spread": false,
+      "description": "The newly created DOM."
     },
     "generator": false
   },
@@ -287,13 +279,12 @@
     "kind": "method",
     "static": false,
     "variation": null,
-    "name": "yipChildStyles",
+    "name": "yipBuildSlot",
     "memberof": "src/yip.js~Element",
-    "longname": "src/yip.js~Element#yipChildStyles",
+    "longname": "src/yip.js~Element#yipBuildSlot",
     "access": null,
-    "description": null,
-    "lineNumber": 140,
-    "undocument": true,
+    "description": "Called to build the slot for an element.\n\nThe default implementation is called by {@link yipBuildChild} and produces\na single `<slot></slot>` element as the child of the child.",
+    "lineNumber": 171,
     "params": [],
     "return": {
       "types": [
@@ -307,12 +298,51 @@
     "kind": "method",
     "static": false,
     "variation": null,
+    "name": "yipChildName",
+    "memberof": "src/yip.js~Element",
+    "longname": "src/yip.js~Element#yipChildName",
+    "access": null,
+    "description": "Called when building a child element to get its name.",
+    "lineNumber": 178,
+    "params": [],
+    "return": {
+      "types": [
+        "string"
+      ]
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 17,
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "yipChildStyles",
+    "memberof": "src/yip.js~Element",
+    "longname": "src/yip.js~Element#yipChildStyles",
+    "access": null,
+    "description": null,
+    "lineNumber": 182,
+    "undocument": true,
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 18,
+    "kind": "method",
+    "static": false,
+    "variation": null,
     "name": "yipChildClasses",
     "memberof": "src/yip.js~Element",
     "longname": "src/yip.js~Element#yipChildClasses",
     "access": null,
     "description": "Called to retrieve a list of classes that will be applied to the shadow\nelement.\n\nAll of the custom element's definition is available, and can be used to\nconditionally add classes to the child element.",
-    "lineNumber": 154,
+    "lineNumber": 196,
     "params": [],
     "return": {
       "nullable": null,
@@ -325,7 +355,7 @@
     "generator": false
   },
   {
-    "__docId__": 17,
+    "__docId__": 19,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -334,13 +364,13 @@
     "longname": "src/yip.js~Element#yipConnect",
     "access": null,
     "description": null,
-    "lineNumber": 158,
+    "lineNumber": 200,
     "undocument": true,
     "params": [],
     "generator": false
   },
   {
-    "__docId__": 18,
+    "__docId__": 20,
     "kind": "method",
     "static": false,
     "variation": null,
@@ -349,7 +379,7 @@
     "longname": "src/yip.js~Element#yipEmit",
     "access": null,
     "description": null,
-    "lineNumber": 161,
+    "lineNumber": 203,
     "undocument": true,
     "params": [
       {
@@ -362,7 +392,7 @@
     "generator": false
   },
   {
-    "__docId__": 19,
+    "__docId__": 21,
     "kind": "function",
     "static": true,
     "variation": null,
@@ -371,10 +401,10 @@
     "longname": "src/yip.js~add",
     "access": null,
     "export": true,
-    "importPath": "./src/yip.js",
+    "importPath": "yip/src/yip.js",
     "importStyle": "{add}",
     "description": "Add a new Yip Element.",
-    "lineNumber": 180,
+    "lineNumber": 222,
     "params": [
       {
         "nullable": null,
@@ -405,7 +435,7 @@
     "generator": false
   },
   {
-    "__docId__": 21,
+    "__docId__": 23,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -418,7 +448,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 22,
+    "__docId__": 24,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -431,7 +461,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 23,
+    "__docId__": 25,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -444,7 +474,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 24,
+    "__docId__": 26,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -457,7 +487,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 25,
+    "__docId__": 27,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -470,7 +500,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 26,
+    "__docId__": 28,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -483,7 +513,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 27,
+    "__docId__": 29,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -496,7 +526,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 28,
+    "__docId__": 30,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -509,7 +539,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 29,
+    "__docId__": 31,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -522,7 +552,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 30,
+    "__docId__": 32,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -535,7 +565,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 31,
+    "__docId__": 33,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -548,7 +578,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 32,
+    "__docId__": 34,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -561,7 +591,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 33,
+    "__docId__": 35,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -574,7 +604,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 34,
+    "__docId__": 36,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -587,7 +617,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 35,
+    "__docId__": 37,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -600,7 +630,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 36,
+    "__docId__": 38,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -613,7 +643,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 37,
+    "__docId__": 39,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -626,7 +656,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 38,
+    "__docId__": 40,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -639,7 +669,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 39,
+    "__docId__": 41,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -652,7 +682,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 40,
+    "__docId__": 42,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -665,7 +695,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 41,
+    "__docId__": 43,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -678,7 +708,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 42,
+    "__docId__": 44,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -691,7 +721,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 43,
+    "__docId__": 45,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -704,7 +734,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 44,
+    "__docId__": 46,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -717,7 +747,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 45,
+    "__docId__": 47,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -730,7 +760,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 46,
+    "__docId__": 48,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -743,7 +773,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 47,
+    "__docId__": 49,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -756,7 +786,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 48,
+    "__docId__": 50,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -769,7 +799,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 49,
+    "__docId__": 51,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -782,7 +812,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 50,
+    "__docId__": 52,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -795,7 +825,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 51,
+    "__docId__": 53,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -808,7 +838,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 52,
+    "__docId__": 54,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -821,7 +851,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 53,
+    "__docId__": 55,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -834,7 +864,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 54,
+    "__docId__": 56,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -847,7 +877,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 55,
+    "__docId__": 57,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -860,7 +890,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 56,
+    "__docId__": 58,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -873,7 +903,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 57,
+    "__docId__": 59,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -886,7 +916,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 58,
+    "__docId__": 60,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -899,7 +929,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 59,
+    "__docId__": 61,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -912,7 +942,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 60,
+    "__docId__": 62,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -925,7 +955,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 61,
+    "__docId__": 63,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -938,7 +968,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 62,
+    "__docId__": 64,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -951,7 +981,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 63,
+    "__docId__": 65,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -964,7 +994,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 64,
+    "__docId__": 66,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -977,7 +1007,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 65,
+    "__docId__": 67,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -990,7 +1020,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 66,
+    "__docId__": 68,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1003,7 +1033,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 67,
+    "__docId__": 69,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1016,7 +1046,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 69,
+    "__docId__": 71,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1029,7 +1059,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 70,
+    "__docId__": 72,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1042,7 +1072,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 71,
+    "__docId__": 73,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1055,7 +1085,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 72,
+    "__docId__": 74,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1068,7 +1098,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 73,
+    "__docId__": 75,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1081,7 +1111,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 74,
+    "__docId__": 76,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1094,7 +1124,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 75,
+    "__docId__": 77,
     "kind": "external",
     "static": true,
     "variation": null,
@@ -1107,7 +1137,7 @@
     "builtinExternal": true
   },
   {
-    "__docId__": 76,
+    "__docId__": 78,
     "kind": "external",
     "static": true,
     "variation": null,

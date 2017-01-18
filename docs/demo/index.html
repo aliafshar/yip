@@ -44,7 +44,7 @@ limitations under the License.
   <aside>
     {{=it.element.yipChildName()}}
     <div class="aside-body">
-    <slot></slot>
+      <slot></slot>
     </div>
     <div class="aside-actions">
       <button>Ok</button>
@@ -82,6 +82,7 @@ limitations under the License.
 
 
 class Note extends yip.Element {
+
 
   yipChildName() {
     return 'aside'
@@ -131,7 +132,7 @@ class TemplateNote extends yip.Element {
 
   yipConnect() {
     for (let elem of this.yipChild.querySelectorAll('button')) {
-      elem.addEventListener('click', (ev) => {
+      elem.addEventListener('click', () => {
         this.yipEmit('action-clicked');
       });
     }
@@ -142,7 +143,9 @@ class TemplateNote extends yip.Element {
 yip.add('my-note-2', TemplateNote);
 
 for (let el of document.querySelectorAll('my-note-2')) {
-  el.addEventListener('action-clicked', console.log);
+  el.addEventListener('action-clicked', () => {
+    console.log('action-clicked');
+  });
 }
 
 

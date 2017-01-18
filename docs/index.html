@@ -10,7 +10,6 @@
   
   
   <script src="script/manual.js"></script>
-<script data-ice="userScript" src="user/script/0-yipUi.js"></script>
 </head>
 <body class="layout-container" data-ice="rootContainer">
 
@@ -20,7 +19,7 @@
   <a href="identifiers.html">Reference</a>
   <a href="source.html">Source</a>
   
-  
+  <a data-ice="repoURL" href="https://github.com/aliafshar/yip" class="repo-url-github">Repository</a>
   <div class="search-box">
   <span>
     <img src="./image/search.png">
@@ -40,7 +39,7 @@
 </nav>
 
 <div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><h1 id="yip">yip</h1>
-<p><strong>Tiny custom elements for the web.</strong> Yip is a JavaScript library which supports:</p>
+<p><strong>Tiny custom elements for the web.</strong> Yip is a JavaScript library/demo which supports:</p>
 <ul>
 <li>Registering new custom elements elements</li>
 <li>Using <code>&lt;template&gt;</code> for element templates</li>
@@ -164,7 +163,7 @@ return the selector of the style sheet you want.</p>
 </code></pre><h3 id="emiting-custom-events">Emiting custom events</h3>
 <p>Elements should emit events. You can easily dispatch an event on your custom
 element, like:</p>
-<pre><code><code class="source-code prettyprint">el.addEventListener(&apos;action-clicked&apos;, function() { //... });
+<pre><code><code class="source-code prettyprint">el.addEventListener(&apos;action-clicked&apos;, () =&gt; {});
 el.yipEmit(&apos;action-clicked&apos;);</code>
 </code></pre><h3 id="connecting-internal-events">Connecting internal events</h3>
 <p><code>yipConnect</code> is called after the entire dom has been created, so use it to

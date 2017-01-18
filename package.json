@@ -1,0 +1,22 @@
+{
+  "name": "yip",
+  "version": "0.0.1",
+  "description": "Tiny custom elements for the web.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aliafshar/yip.git"
+  },
+  "author": "Ali Afshar <aafshar@gmail.com>",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/aliafshar/yip/issues"
+  },
+  "homepage": "https://github.com/aliafshar/yip#readme"
+}
