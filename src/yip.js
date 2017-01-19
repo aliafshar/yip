@@ -15,6 +15,34 @@
  */
 
 
+export function addTemplate(root, template) {
+    const p = new DOMParser();
+    const d = p.parseFromString(template, 'text/html');
+    const child = d.body.firstChild;
+    root.append(child);
+    return child;
+}
+
+
+export function applyClasses(targetNode, classes) {
+  for (let className in classes) {
+    if (classes[className]) {
+      targetNode.classList.add(className);
+    }
+  }
+}
+
+export function copyAttrs(targetNode, sourceNode, attrsList) {
+    for (let i = 0; i < attrsList.length; i++) {
+      const attrName = attrsList[i];
+      const val = sourceNode.getAttribute(attrName);
+      if (val || val == '') {
+        targetNode.setAttribute(attrName, val);
+      }
+    }
+  }
+
+
 /**
  * Yip element class.
  *
@@ -36,67 +64,85 @@ export class Element extends HTMLElement {
    */
   constructor() {
     super();
+    
+    // These are the main yip state variables
     this.yipRoot = this.yipBuildRoot();
-    this.yipChild = this.yipBuildChild();
-    this.yipApplyClasses();
-    this.yipApplyStyles();
-    this.yipConnect();
-    this.yipRoot.append(this.yipChild);
-  }
+    this.yipNode = null;
+    this.yipSlot = null;
 
-  connectedCallback() {
+    this.yipBuild();
+    
   }
 
   /**
-   * Called to transform a template.
-   *
-   * Override it to add your own templating system if you want to do
-   * interpolation.
+   * Override to build the DOM.
    */
-  yipRenderTemplate(input) {
-    return input;
+  yipBuild() {
   }
 
   /**
-   * Called to get the template element selector.
-   *
-   * Override it to use a template for creating the DOM instead building the
-   * element. The function should return a selector, usually an ID makes
-   * most sense here. If you don't wants to use a template, just ignore this.
-   *
-   * @return {string} The selector for the template element to use. OR null to
-   * imply that there will be no template and DOM will be created manually.
+   * Override to return the default template.
    */
-  yipChildTemplate() {
-    return null;
+  yipTemplate() {
+    return '';
   }
 
-  yipUpdate() {
-  }
-  
   /**
-   * Apply the configured classes the the child element.
+   * Add the template string as HTML to the shadowDom.
    */
-  yipApplyClasses() {
-    const classes = this.yipChildClasses();
-    for (let className in classes) {
-      if (classes[className]) {
-        this.yipChild.classList.add(className);
-      }
+  yipAdd(templateContent) {
+    if (!templateContent) {
+      templateContent = this.yipTemplate();
     }
+    this.yipNode = addTemplate(this.yipRoot, templateContent);
   }
 
   /**
-   * Apply the configured style sheets the the child element.
+   * Create and add a named element to the shadow root.
    */
-  yipApplyStyles(styles) {
-    const styleSelector = this.yipChildStyles();
-    if (styleSelector) {
-      const styleNode = document.querySelector(styleSelector);
-      const newStyleNode = styleNode.cloneNode(true);
-      newStyleNode.id = '';
-      this.yipRoot.append(newStyleNode);
+  yipAddElement(elementName, hasSlot=true) {
+    const el = document.createElement(elementName);
+    if (hasSlot) {
+      el.append(this.yipBuildSlot());
     }
+    this.yipNode = el;
+    this.yipRoot.append(el);
+    return el;
+  }
+
+  /**
+   * The children of this element. i.e. the slot's assigned nodes.
+   */
+  get yipChildren() {
+    return this.yipSlot.assignedNodes();
+  }
+
+  /**
+   * The first child of this element, i.e. in the slot.
+   */
+  get yipFirstChild() {
+    return this.yipChildren[0]
+  }
+
+  yipCopyAttrs(attrsList) {
+    copyAttrs(this.yipNode, this, attrsList);
+  }
+
+  yipApplyClasses(classes) {
+    applyClasses(this.yipNode, classes);
+  }
+
+  yipAddStylesheet(styleUrl) {
+    const node = document.createElement('link');
+    node.rel = "stylesheet";
+    node.href = styleUrl;
+    this.yipRoot.append(node)
+  }
+
+  yipAddScript(scriptUrl) {
+    const node = document.createElement('script');
+    node.src = scriptUrl;
+    this.yipRoot.append;
   }
 
   yipBuildRoot() {
@@ -104,68 +150,9 @@ export class Element extends HTMLElement {
   }
 
   /**
-   * Called to build the element that is attached to the DOM.
-   *
-   * If overriding, you must ensure that if you want child elements, to attach
-   * the `<slot></slot>` element as a child.
-   */
-  yipBuildChild() {
-    if (this.yipChildTemplate()) {
-      let child = this.yipBuildTemplateChild();
-      if (!child) {
-        child = document.createElement('div');
-        child.textContent = 'template error';
-      }
-      return child;
-    } else {
-      const child = this.yipBuildElementChild();
-      return child;
-    }
-  }
-
-  /**
-   * Called to build the child element from a template.
-   */
-  yipBuildTemplateChild() {
-    const childTemplate = document.querySelector(this.yipChildTemplate());
-    if (childTemplate) {
-      if (childTemplate.content.children.length != 1) {
-        console.warn('Template has != 1 children');
-        return;
-      }
-      const copyTemplate = childTemplate.cloneNode(true);
-      copyTemplate.innerHTML = this.yipRenderTemplate(childTemplate.innerHTML);
-      return copyTemplate.content.children[0].cloneNode(true);
-    } else {
-      console.warn('Template not found.', this.yipChildTemplate());
-      return;
-    }
-  }
-
-  /**
-   * Called to create the Element's entire DOM.
-   *
-   * Override this to create a more complicated DOM than just a single element.
-   * The default implementation creates a single element of {@link yipChildName}
-   * but any DOM can be used.
-   *
-   * You should also be responsible for creating a slot element as a child if
-   * you wish your custom element to have child nodes.
-   *
-   * **Note: If a template is defined, this method will not be called.**
-   *
-   * @return {HTMLElement} The newly created DOM.
-   */
-  yipBuildElementChild() {
-    const el = document.createElement(this.yipChildName());
-    el.append(this.yipBuildSlot());
-    return el;
-  }
-
-  /**
    * Called to build the slot for an element.
    *
-   * The default implementation is called by {@link yipBuildChild} and produces
+   * The default implementation is called by {@link yipAddElement} and produces
    * a single `<slot></slot>` element as the child of the child.
    */
   yipBuildSlot() {
@@ -173,33 +160,8 @@ export class Element extends HTMLElement {
   }
 
   /**
-   * Called when building a child element to get its name.
+   * Emit a custom event.
    */
-  yipChildName() {
-    return 'div';
-  }
-
-  yipChildStyles() {
-    return null;
-  }
-
-  /**
-   * Called to retrieve a list of classes that will be applied to the shadow
-   * element.
-   *
-   * All of the custom element's definition is available, and can be used to
-   * conditionally add classes to the child element.
-   *
-   * @return {object} Mapping class names to a boolean value of whether to
-   * apply the class or not.
-   */
-  yipChildClasses() {
-    return {};
-  }
-
-  yipConnect() {
-  }
-
   yipEmit(name) {
     this.dispatchEvent(new Event(name));
   }
@@ -219,7 +181,7 @@ export class Element extends HTMLElement {
  *   The type of the controller.
  *
  */
-export function add(elementName, elementType) {
+export function register(elementName, elementType) {
   customElements.define(elementName, elementType);
   return elementType;
 }
