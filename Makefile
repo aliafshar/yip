@@ -31,7 +31,6 @@ mdc:
 build: init jsdoc demos
 	rollup -f iife --name yip src/yip.js > dist/yip.js
 	cp dist/yip.js docs/demo/
-	cp dist/ymdc-button.js docs/demo/
 	rm -rf docs/demo/mdc
 
 init:

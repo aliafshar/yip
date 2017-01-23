@@ -187,7 +187,7 @@ class Element extends HTMLElement {
    * You should override it to do anything, for example:
    *
    *     yipBuild {
-   *       this.addElement('button');
+   *       this.yipAddElement('button');
    *     }
    */
   yipBuild() {

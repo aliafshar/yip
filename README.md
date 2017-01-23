@@ -35,7 +35,7 @@ class Note extends yip.Element {
   }
 }
 
-yip.Add('my-note', Note);
+yip.register('my-note', Note);
 ```
 
 Now you can describe how to build the dom for your element by overriding
@@ -48,7 +48,7 @@ class Note extends yip.Element {
   }
 }
 
-yip.Add('my-note', Note);
+yip.register('my-note', Note);
 ```
 
 Now you can use your elements with:
@@ -61,6 +61,12 @@ And they will render as:
 
 ```
 <aside>yo!</aside>
+```
+
+or in reality, looks like:
+
+```
+<my-note><shadow><aside><slot>yo!</slot></aside></shadow></my-note>
 ```
 
 ### Applying Element Classes and Attribute Handling
@@ -86,7 +92,7 @@ class Note extends yip.Element {
   }
 }
 
-yip.add('my-note', Note);
+yip.register('my-note', Note);
 ```
 
 Now, using the markup 
@@ -121,7 +127,7 @@ class Note extends yip.Element {
   }
 }
 
-yip.add('my-note', Note);
+yip.register('my-note', Note);
 ```
 ### Applying an external template transformer
 
@@ -130,16 +136,15 @@ like by overriding `yipRenderTemplate`. For example to use doT templates:
 
 ```
 class Note extends yip.Element {
-
   yipTemplate() {
     return doT.template(t)({'element': this});
   }
-
   yipBuild() {
     this.yipAdd(this.yipTemplate());
   }
-
 }
+
+yip.register('my-note', Note);
 ```
 
 Now we can have all kinds of crazy templates. The example above passes the
@@ -161,12 +166,9 @@ First from a loaded external stylesheet.
 
 ```
 class Note extends yip.Element {
-
   yipBuild() {
     this.yipAddStyleLink('css/mystyles.css');
   }
-
-
 }
 ```
 
