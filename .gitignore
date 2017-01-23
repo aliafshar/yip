@@ -2,3 +2,4 @@
 src/mdc
 dist/mdc
 docs/demo
+node_modules

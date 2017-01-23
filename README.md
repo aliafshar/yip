@@ -1,4 +1,11 @@
+
 # yip
+
+[Github](https://github.com/aliafshar/yip)
+| [Docs](https://yipjs-7c3d2.firebaseapp.com/)
+| [Demo](https://yipjs-7c3d2.firebaseapp.com/demo)
+| [License (Apache2)](https://github.com/aliafshar/yip/blob/master/LICENSE)
+
 
 **Tiny custom element toolbox for the web.**
 
@@ -18,12 +25,6 @@ For interacting with the Shadow DOM, there are a number of features:
 Note: Yip uses Custom Elements v1 API. Polyfilling that to older browsers is
 left as an exercise for the brave user.
 
-### Quick Links
-
-* [Github](https://github.com/aliafshar/yip)
-* [Docs](https://yipjs-7c3d2.firebaseapp.com/)
-* [Demo](https://yipjs-7c3d2.firebaseapp.com/demo)
-* [License (Apache2)](https://github.com/aliafshar/yip/blob/master/LICENSE)
 
 ### Start now
 
@@ -62,10 +63,10 @@ And they will render as:
 or in reality, looks like:
 
 ```
-<my-note><shadow><aside><slot>yo!</slot></aside></shadow></my-note>
+<my-note>[#shadow]<aside><slot>yo!</slot></aside>[/shadow]</my-note>
 ```
 
-But that's the whole point of the shadow DOM.
+But that's the whole point of the shadow DOM, and slots and things.
 
 ### Applying Element Classes and Attribute Handling
 

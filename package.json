@@ -18,5 +18,8 @@
   "bugs": {
     "url": "https://github.com/aliafshar/yip/issues"
   },
-  "homepage": "https://github.com/aliafshar/yip#readme"
+  "homepage": "https://github.com/aliafshar/yip#readme",
+  "devDependencies": {
+    "babel-preset-es2015": "^6.22.0"
+  }
 }

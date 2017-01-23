@@ -29,9 +29,9 @@ mdc:
 	cp -R ../material-components-web/build src/mdc
 
 build: init jsdoc demos
-	rollup -f iife --name yip src/yip.js > dist/yip.js
+	rollup -f iife --name yip src/yip.js | babel --presets es2015 > dist/yip.js
+	uglifyjs dist/yip.js > dist/yip.min.js
 	cp dist/yip.js docs/demo/
-	rm -rf docs/demo/mdc
 
 init:
 	mkdir -p docs dist
