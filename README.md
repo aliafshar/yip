@@ -1,25 +1,24 @@
 # yip
 
-**Tiny custom elements for the web.** Yip is a JavaScript library/demo which supports:
+**Tiny custom elements for the web.**
 
-* Registering new custom elements elements
-* Using `<template>` for element templates
-* Pluggable template transform
-* Building an element in shadow dom
-* Scoped styles
-* Custom events
+Yip is a JavaScript library/demo which provides:
+
+* Creating and registering new custom elements
+* Shadow DOM manipulation and generation library
+
+For interacting with the Shadow DOM, there are a number of features:
 
 Note: Yip uses Custom Elements v1 API. Polyfilling that to older browsers is
 left as an exercise for the brave user.
 
 
-### Quick
+### Quick Links
 
 * [Github](https://github.com/aliafshar/yip)
 * [Docs](https://yipjs-7c3d2.firebaseapp.com/)
 * [Demo](https://yipjs-7c3d2.firebaseapp.com/demo)
-* [License](https://github.com/aliafshar/yip/blob/master/LICENSE) (spoiler:
-  Apache2)
+* [License (Apache2)](https://github.com/aliafshar/yip/blob/master/LICENSE)
 
 ### Start now
 
@@ -27,13 +26,26 @@ To get started we are going to create a custom element `my-note` that will
 render as an HTML `<aside>` element. That's all.
 
 First, subclass `yip.Element` to create your custom element, then register it
-with yip.
+with yip. It doesn't do anything for now.
 
 ```
 class Note extends yip.Element {
+  yipBuild() {
+    // ... build and configure your element here
+  }
+}
 
-  yipChildName() { return 'aside'; }
+yip.Add('my-note', Note);
+```
 
+Now you can describe how to build the dom for your element by overriding
+`yipBuild`. For our aside use-case, you would build it like:
+
+```
+class Note extends yip.Element {
+  yipBuild() {
+    this.yipAddElement('aside');
+  }
 }
 
 yip.Add('my-note', Note);
@@ -62,26 +74,16 @@ order to read:
 ```
 
 I might likely want to apply a class to the child aside in order to affect how it
-looks. To set styles conditionally, override `yipChildClasses` on your element
-to provide a list of classes. Here we add `warning`, `error` and `note`.
+looks. Let's apply the `warning-text` class.
+
+To do this call `yipApplyClasses`:
 
 ```
 class Note extends yip.Element {
-
-  yipChildName() {
-    return 'aside'
+  yipBuild() {
+    this.yipAddElement('aside');
+    this.yipApplyClasses({'warning-text': this.attributes.warning});
   }
-
-  yipChildClasses() {
-    return {
-      'my-note': true,
-      'warning': this.attributes.warning,
-      'error': this.attributes.error,
-      'note': !(this.attributes.error &&
-                this.attributes.warning),
-    }
-  }
-  
 }
 
 yip.add('my-note', Note);
@@ -94,36 +96,33 @@ Now, using the markup
 <my-note error>ohnoes!</my-note>
 ```
 
-### Using `<template>`s
+### Using templates
 
 You might want a more complicated UI, and decide to write it in a template:
 
 
 ```
-<template id="my-note-template">
-  <aside>
-    <div class="aside-content">
-      <slot></slot>
-    </div>
-    <div cass="aside-actions">
-      <button>Ok</button>
-      <button>Not Ok</button>
-    </div>
-  </aside>
-</template>
+const t = `<aside>
+            <div class="aside-content">
+              <slot></slot>
+            </div>
+            <div cass="aside-actions">
+              <button>Ok</button>
+              <button>Not Ok</button>
+            </div>
+          </aside>`;
 ```
 You can then use this template:
 
 ```
 class Note extends yip.Element {
-
-  yipChildTemplate() { return '#my-note-template'; }
-
+  yipBuild() {
+    this.yipAdd(t);
+  }
 }
-```
-The template should have a single child element, and that element will become
-the element's child.
 
+yip.add('my-note', Note);
+```
 ### Applying an external template transformer
 
 You might decide that you want more complicated templating. Plug in whatever you
@@ -132,10 +131,12 @@ like by overriding `yipRenderTemplate`. For example to use doT templates:
 ```
 class Note extends yip.Element {
 
-  yipChildTemplate() { return '#my-note-template'; }
+  yipTemplate() {
+    return doT.template(t)({'element': this});
+  }
 
-  yipRenderTemplate(input) {
-    return doT.template(input)({'element': this});
+  yipBuild() {
+    this.yipAdd(this.yipTemplate());
   }
 
 }
@@ -145,33 +146,25 @@ Now we can have all kinds of crazy templates. The example above passes the
 element into the template, so it can get used as the `it.element` by doT.
 
 ```
-<template id="my-note-template">
-  <aside>
-    Is this a warning?
-    {{= it.element.attributes.warning  }}
-  </aside>
-</template>
+const t = `<template id="my-note-template">
+            <aside>
+              Is this a warning?
+              {{= it.element.attributes.warning  }}
+            </aside>`;
 ```
 Bring your own templating system, and hook it in. No need for plugins
 or anything.
 
 ### Adding element-specific styles
 
-To a stylesheet to be scoped to the element, override `yipChildStyles()` to
-return the selector of the style sheet you want.
+First from a loaded external stylesheet.
 
-First create the styles:
-```
-<style id="my-note-styles">
-  .my-note { ... }
-</style>
-```
-
-Then specify them.
 ```
 class Note extends yip.Element {
 
-  yipChildStyles() { return '#my-note-styles'; }
+  yipBuild() {
+    this.yipAddStyleLink('css/mystyles.css');
+  }
 
 
 }
@@ -189,13 +182,10 @@ el.yipEmit('action-clicked');
 
 ### Connecting internal events
 
-`yipConnect` is called after the entire dom has been created, so use it to
-connected internal events.
-
+Just connect them in `yipBuild` sometime after you have created the elements.
 
 <hr />
 
 *Note: yip is not an official Google product. Didn't wanna be one anyway, so
 there.*
 
-![yip logo](https://yipjs-7c3d2.firebaseapp.com/art/alien.png)

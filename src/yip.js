@@ -15,24 +15,98 @@
  */
 
 
-export function addTemplate(root, template) {
+/**
+ * Utilities for manipulating the shadow DOM used by custom yip elements.
+ */
+export class util {
+
+  /**
+   * Parse and add a chunk of html to the given root element.
+   *
+   * @param {HTMLElement} root
+   *
+   *    The element to add the template to.
+   *
+   * @param {string} templateText
+   *
+   *    The template string to add.
+   */
+  static addTemplate(root, templateText) {
     const p = new DOMParser();
-    const d = p.parseFromString(template, 'text/html');
+    const d = p.parseFromString(templateText, 'text/html');
     const child = d.body.firstChild;
     root.append(child);
     return child;
-}
+  }
+
+  static buildSlot() {
+    return document.createElement('slot');
+  }
+
+  static addElement(root, elementName, hasSlot=true) {
+    const node = document.createElement(elementName);
+    if (hasSlot) {
+      node.append(buildSlot());
+    }
+    root.append(node);
+    return node;
+  }
+
+  /**
+   * TODO
+   */
+  static addScript(root, scriptText) {
+  }
+
+  /**
+   * TODO
+   */
+  static addScriptLink(root, scriptUrl) {
+  }
 
 
-export function applyClasses(targetNode, classes) {
-  for (let className in classes) {
-    if (classes[className]) {
-      targetNode.classList.add(className);
+  static addStyleLink(root, styleUrl) {
+    const node = document.createElement('link');
+    node.rel = "stylesheet";
+    node.href = styleUrl;
+    root.append(node);
+    return node;
+  }
+
+  /**
+   * TODO
+   */
+  static addStyle(root, styleText) {
+  }
+
+  /**
+   * TODO
+   */
+  static addStyleSelector(root, selector) {
+  }
+
+  /**
+   * Apply classes to the given node.
+   * 
+   * @param {HTMLElement} targetNode
+   *
+   *    The element to apply classes to.
+   *
+   * @param {object} classes
+   *
+   *    An object containing the class definitions in the format
+   *    className: true/false as to whether the class should be applied.
+   *
+   */
+  static applyClasses(targetNode, classes) {
+    for (let className in classes) {
+      if (classes[className]) {
+        targetNode.classList.add(className);
+      }
     }
   }
-}
 
-export function copyAttrs(targetNode, sourceNode, attrsList) {
+  static copyAttrs(targetNode, sourceNode, attrsList) {
     for (let i = 0; i < attrsList.length; i++) {
       const attrName = attrsList[i];
       const val = sourceNode.getAttribute(attrName);
@@ -41,6 +115,7 @@ export function copyAttrs(targetNode, sourceNode, attrsList) {
       }
     }
   }
+}
 
 
 /**
@@ -66,22 +141,66 @@ export class Element extends HTMLElement {
     super();
     
     // These are the main yip state variables
+    
+    /**
+     * The Shadow root.
+     *
+     * This is a DOM node that is rendered in place of this element. You can
+     * treat it as the parent node for this element. All yipAdd* methods append
+     * nodes to this element.
+     */
     this.yipRoot = this.yipBuildRoot();
+
+    /**
+     * The main renderable node.
+     *
+     * All yipAdd* methods set this attribute. If you don't use them, you should
+     * set the attribute yourself as the main renderable node.
+     */
     this.yipNode = null;
+
+    /**
+     * The default slot.
+     *
+     * The slot element is where child nodes will be added to your custom
+     * element. It is critical t add if you wish your element to contain other
+     * elements.
+     *
+     * All yipAdd* methods set this attribute.
+     */
     this.yipSlot = null;
 
+    // Build the thing!
     this.yipBuild();
     
   }
 
   /**
    * Override to build the DOM.
+   *
+   * This method is called by the constructor, and is the main entry point for
+   * building the element behind the scences.
+   *
+   * You should override it to do anything, for example:
+   *
+   *     yipBuild {
+   *       this.addElement('button');
+   *     }
    */
   yipBuild() {
   }
 
   /**
-   * Override to return the default template.
+   * The default template.
+   *
+   *   @return {string} The template's content as a string.
+   *
+   * Override this to return a string that is the template to be parsed and
+   * rendered. You don't need to include the `<template>` tags or anything like
+   * that. Just a string of any DOM.
+   *
+   * This is just a convention, really. You can pass any string into
+   * {@link yipAdd} to ad that template instead or also.
    */
   yipTemplate() {
     return '';
@@ -89,29 +208,46 @@ export class Element extends HTMLElement {
 
   /**
    * Add the template string as HTML to the shadowDom.
+   *
+   * @param {string} templateContent
+   *
+   *     The content of the template to load and add to the shadow root.
+   *
+   *     If !templateContent, the value will be grabbed from calling
+   *     {@link yipTemplate}. But that's implicit and nasty, so possibly pass it
+   *     in explicitly.
    */
   yipAdd(templateContent) {
     if (!templateContent) {
       templateContent = this.yipTemplate();
     }
-    this.yipNode = addTemplate(this.yipRoot, templateContent);
+    this.yipNode = util.addTemplate(this.yipRoot, templateContent);
   }
 
   /**
-   * Create and add a named element to the shadow root.
+   * Create and add an element to the shadow root.
+   *
+   * @param {string} elementName
+   *
+   *     The element to create, e.g. `'div'`.
+   *
+   * @param {boolean} hasSlot
+   *
+   *     Whether to create and add a slot to the child. Usually for single
+   *     node elements, you will just use the default `true` to enable your
+   *     element to have children.
+   *
+   * This simply creates
    */
   yipAddElement(elementName, hasSlot=true) {
-    const el = document.createElement(elementName);
-    if (hasSlot) {
-      el.append(this.yipBuildSlot());
-    }
-    this.yipNode = el;
-    this.yipRoot.append(el);
-    return el;
+    this.yipNode = addElement(this.yipRoot, elementName, hasSlot);
+    return this.yipNode;
   }
 
   /**
-   * The children of this element. i.e. the slot's assigned nodes.
+   * The children of this element.
+   *
+   * This is really just the default slot's assigned nodes.
    */
   get yipChildren() {
     return this.yipSlot.assignedNodes();
@@ -124,39 +260,49 @@ export class Element extends HTMLElement {
     return this.yipChildren[0]
   }
 
+  /**
+   * Copy attributes to the element's node.
+   */
   yipCopyAttrs(attrsList) {
     copyAttrs(this.yipNode, this, attrsList);
   }
 
+  /**
+   * Apply classes to the element's main node.
+   *
+   * @param {object} classes
+   *
+   *    An object containing the class definitions in the format
+   *    className: true/false as to whether the class should be applied.
+   *
+   * You should use this method to apply conditional classes to the element's
+   * main node during {@link yipBuild}, for example:
+   *
+   *     this.yipApplyClasses({
+   *         isBlinking: this.attributes.blinking
+   *     })
+   *
+   * which when an element is created:
+   *
+   *     <my-element blinking>
+   *
+   * The class `isBlinking` will be applied to the main node.
+   *
+   *
+   */
   yipApplyClasses(classes) {
-    applyClasses(this.yipNode, classes);
+    util.applyClasses(this.yipNode, classes);
   }
 
-  yipAddStylesheet(styleUrl) {
-    const node = document.createElement('link');
-    node.rel = "stylesheet";
-    node.href = styleUrl;
-    this.yipRoot.append(node)
-  }
-
-  yipAddScript(scriptUrl) {
-    const node = document.createElement('script');
-    node.src = scriptUrl;
-    this.yipRoot.append;
-  }
-
-  yipBuildRoot() {
-    return this.attachShadow({mode: 'open'});
+  yipAddStyleLink(styleUrl) {
+    util.addStyleLink(this.yipRoot, styleUrl)
   }
 
   /**
-   * Called to build the slot for an element.
-   *
-   * The default implementation is called by {@link yipAddElement} and produces
-   * a single `<slot></slot>` element as the child of the child.
+   * Build the shadow root.
    */
-  yipBuildSlot() {
-    return document.createElement('slot');
+  yipBuildRoot() {
+    return this.attachShadow({mode: 'open'});
   }
 
   /**

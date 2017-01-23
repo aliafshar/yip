@@ -12,21 +12,36 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-dev:
-	make serve &
-	watch -n 1 make build doc
+dev: build
+	echo built
+	127 docs
 
-doc: init
-	esdoc -c etc/esdoc_conf.json
+esdoc: init
+	rm -rf src/mdc
+	esdoc -c etc/esdoc_conf.json -f umd
+	make mdc
 
-build: init
-	rollup -c etc/rollup_conf.js
+jsdoc: init
+	jsdoc -R README.md -d docs -c etc/jsdoc_conf.js src/yip.js 
+
+mdc:
+	rm -rf src/mdc
+	cp -R ../material-components-web/build src/mdc
+
+build: init jsdoc demos
+	rollup -f iife --name yip src/yip.js > dist/yip.js
 	cp dist/yip.js docs/demo/
+	cp dist/ymdc-button.js docs/demo/
+	rm -rf docs/demo/mdc
 
 init:
 	mkdir -p docs dist
 
-deploy:
+demos: jsdoc
+	rm -rf docs/demo
+	cp -R demo docs/
+
+deploy: build demos
 	cp etc/firebase_conf.json firebase.json
 	firebase deploy
 	rm firebase.json
