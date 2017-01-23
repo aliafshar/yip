@@ -1,17 +1,22 @@
 # yip
 
-**Tiny custom elements for the web.**
+**Tiny custom element toolbox for the web.**
 
 Yip is a JavaScript library/demo which provides:
 
 * Creating and registering new custom elements
 * Shadow DOM manipulation and generation library
+* Event handling and emitting
 
 For interacting with the Shadow DOM, there are a number of features:
 
+* Create and add DOM
+* Create and manage the `<slot>`
+* Add stylesheets, scripts or templates
+* Support any template engine without a plugin
+
 Note: Yip uses Custom Elements v1 API. Polyfilling that to older browsers is
 left as an exercise for the brave user.
-
 
 ### Quick Links
 
@@ -25,21 +30,12 @@ left as an exercise for the brave user.
 To get started we are going to create a custom element `my-note` that will
 render as an HTML `<aside>` element. That's all.
 
-First, subclass `yip.Element` to create your custom element, then register it
-with yip. It doesn't do anything for now.
+First, subclass [`yip.Element`](/Element.html) to create your custom element,
+then call call [`yip.register`](/globals.html#register) to register your new
+custom element.
 
-```
-class Note extends yip.Element {
-  yipBuild() {
-    // ... build and configure your element here
-  }
-}
-
-yip.register('my-note', Note);
-```
-
-Now you can describe how to build the dom for your element by overriding
-`yipBuild`. For our aside use-case, you would build it like:
+Now you can describe how to build the DOM for your element by overriding
+`yipBuild`. For our `<my-note>` use-case, you would build it like:
 
 ```
 class Note extends yip.Element {
@@ -68,6 +64,8 @@ or in reality, looks like:
 ```
 <my-note><shadow><aside><slot>yo!</slot></aside></shadow></my-note>
 ```
+
+But that's the whole point of the shadow DOM.
 
 ### Applying Element Classes and Attribute Handling
 
