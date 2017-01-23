@@ -185,6 +185,20 @@ el.yipEmit('action-clicked');
 
 Just connect them in `yipBuild` sometime after you have created the elements.
 
+### Using Slots
+
+Slots are amazing. They tell the browser where in your shadow DOM children of
+your element should be added. You should probably define a `<slot>` element in
+every template you pass.
+
+You can of course have multiple slots. Yip will only manage the first (default)
+slot. Please read [an article about slots](https://developers.google.com/web/fundamentals/getting-started/primers/shadowdom#composition_slot)
+if you care.
+
+
+If you call `yipAddElement` a slot will be added for
+you.
+
 <hr />
 
 *Note: yip is not an official Google product. Didn't wanna be one anyway, so
