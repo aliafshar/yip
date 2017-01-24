@@ -38,7 +38,7 @@ custom element.
 Now you can describe how to build the DOM for your element by overriding
 `yipBuild`. For our `<my-note>` use-case, you would build it like:
 
-```
+```javascript
 class Note extends yip.Element {
   yipBuild() {
     this.yipAddElement('aside');
@@ -50,19 +50,19 @@ yip.register('my-note', Note);
 
 Now you can use your elements with:
 
-```
+```html
 <my-note>yo!</my-note>
 ```
 
 And they will render as:
 
-```
+```html
 <aside>yo!</aside>
 ```
 
 or in reality, looks like:
 
-```
+```html
 <my-note>[#shadow]<aside><slot>yo!</slot></aside>[/shadow]</my-note>
 ```
 
@@ -74,7 +74,7 @@ You might want to add attribute handling to your element. The
 attributes are your API. So, say I want to handle an attribute `warning` in
 order to read:
 
-```
+```html
 <my-note warning>meep!</my-note>
 ```
 
@@ -83,7 +83,7 @@ looks. Let's apply the `warning-text` class.
 
 To do this call `yipApplyClasses`:
 
-```
+```javascript
 class Note extends yip.Element {
   yipBuild() {
     this.yipAddElement('aside');
@@ -95,7 +95,7 @@ yip.register('my-note', Note);
 ```
 
 Now, using the markup 
-```
+```html
 <my-note>yo!</my-note>
 <my-note warning>meep!</my-note>
 <my-note error>ohnoes!</my-note>
@@ -106,7 +106,7 @@ Now, using the markup
 You might want a more complicated UI, and decide to write it in a template:
 
 
-```
+```javascript
 const t = `<aside>
             <div class="aside-content">
               <slot></slot>
@@ -119,7 +119,7 @@ const t = `<aside>
 ```
 You can then use this template:
 
-```
+```javascript
 class Note extends yip.Element {
   yipBuild() {
     this.yipAdd(t);
@@ -133,7 +133,7 @@ yip.register('my-note', Note);
 You might decide that you want more complicated templating. Plug in whatever you
 like by overriding `yipRenderTemplate`. For example to use doT templates:
 
-```
+```javascript
 class Note extends yip.Element {
   yipTemplate() {
     return doT.template(t)({'element': this});
@@ -149,7 +149,7 @@ yip.register('my-note', Note);
 Now we can have all kinds of crazy templates. The example above passes the
 element into the template, so it can get used as the `it.element` by doT.
 
-```
+```javascript
 const t = `<template id="my-note-template">
             <aside>
               Is this a warning?
@@ -163,7 +163,7 @@ or anything.
 
 First from a loaded external stylesheet.
 
-```
+```javascript
 class Note extends yip.Element {
   yipBuild() {
     this.yipAddStyleLink('css/mystyles.css');
@@ -176,7 +176,7 @@ class Note extends yip.Element {
 Elements should emit events. You can easily dispatch an event on your custom
 element, like:
 
-```
+```javascript
 el.addEventListener('action-clicked', () => {});
 el.yipEmit('action-clicked');
 ```
