@@ -33,7 +33,7 @@ To get started we are going to create a custom element `my-note` that will
 render as an HTML `<aside>` element. That's all.
 
 First, subclass [`yip.Element`](/Element.html) to create your custom element,
-then call call [`yip.register`](/globals.html#register) to register your new
+then call [`yip.register`](/globals.html#register) to register your new
 custom element.
 
 Now you can describe how to build the DOM for your element by overriding
