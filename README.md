@@ -5,7 +5,7 @@
 | [Docs](https://yipjs-7c3d2.firebaseapp.com/)
 | [Demo](https://yipjs-7c3d2.firebaseapp.com/demo/)
 | [Tests](https://yipjs-7c3d2.firebaseapp.com/test/)
-| [License (Apache2)](https://github.com/aliafshar/yip/blob/master/LICENSE)
+| [License](https://github.com/aliafshar/yip/blob/master/LICENSE)
 
 
 **Tiny custom element toolbox for the web.**
