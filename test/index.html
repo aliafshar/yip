@@ -1,0 +1,20 @@
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Mocha Tests for Yip</title>
+  <link href="https://cdn.rawgit.com/mochajs/mocha/2.2.5/mocha.css" rel="stylesheet" />
+</head>
+<body>
+  <div id="mocha"></div>
+
+  <script src="mocha.js"></script>
+  <script src="chai.js"></script>
+  <script>mocha.setup('bdd')</script>
+  <script src="yip.js"></script>
+  <script src="test_yip.js"></script>
+  <script>
+    mocha.checkLeaks();
+    mocha.run();
+  </script>
+</body>
+</html>

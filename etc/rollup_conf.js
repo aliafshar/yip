@@ -6,6 +6,7 @@ export default {
   format: 'iife',
   moduleName: 'yip',
   plugins: [
+    // Babel is broken for custom elements!
     //babel({
     //  exclude: 'node_modules/**',
     //  presets: ['es2015-script'],

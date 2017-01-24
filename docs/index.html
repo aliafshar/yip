@@ -46,6 +46,7 @@
         <article><h1>yip</h1><p><a href="https://github.com/aliafshar/yip">Github</a>
 | <a href="https://yipjs-7c3d2.firebaseapp.com/">Docs</a>
 | <a href="https://yipjs-7c3d2.firebaseapp.com/demo">Demo</a>
+| <a href="https://yipjs-7c3d2.firebaseapp.com/test">Tests</a>
 | <a href="https://github.com/aliafshar/yip/blob/master/LICENSE">License (Apache2)</a></p>
 <p><strong>Tiny custom element toolbox for the web.</strong></p>
 <p>Yip is a JavaScript library/demo which provides:</p>
@@ -70,23 +71,23 @@ then call call <a href="/globals.html#register"><code>yip.register</code></a> to
 custom element.</p>
 <p>Now you can describe how to build the DOM for your element by overriding
 <code>yipBuild</code>. For our <code>&lt;my-note&gt;</code> use-case, you would build it like:</p>
-<pre class="prettyprint source"><code>class Note extends yip.Element {
+<pre class="prettyprint source lang-javascript"><code>class Note extends yip.Element {
   yipBuild() {
     this.yipAddElement('aside');
   }
 }
 
 yip.register('my-note', Note);</code></pre><p>Now you can use your elements with:</p>
-<pre class="prettyprint source"><code>&lt;my-note>yo!&lt;/my-note></code></pre><p>And they will render as:</p>
-<pre class="prettyprint source"><code>&lt;aside>yo!&lt;/aside></code></pre><p>or in reality, looks like:</p>
-<pre class="prettyprint source"><code>&lt;my-note>[#shadow]&lt;aside>&lt;slot>yo!&lt;/slot>&lt;/aside>[/shadow]&lt;/my-note></code></pre><p>But that's the whole point of the shadow DOM, and slots and things.</p>
+<pre class="prettyprint source lang-html"><code>&lt;my-note>yo!&lt;/my-note></code></pre><p>And they will render as:</p>
+<pre class="prettyprint source lang-html"><code>&lt;aside>yo!&lt;/aside></code></pre><p>or in reality, looks like:</p>
+<pre class="prettyprint source lang-html"><code>&lt;my-note>[#shadow]&lt;aside>&lt;slot>yo!&lt;/slot>&lt;/aside>[/shadow]&lt;/my-note></code></pre><p>But that's the whole point of the shadow DOM, and slots and things.</p>
 <h3>Applying Element Classes and Attribute Handling</h3><p>You might want to add attribute handling to your element. The
 attributes are your API. So, say I want to handle an attribute <code>warning</code> in
 order to read:</p>
-<pre class="prettyprint source"><code>&lt;my-note warning>meep!&lt;/my-note></code></pre><p>I might likely want to apply a class to the child aside in order to affect how it
+<pre class="prettyprint source lang-html"><code>&lt;my-note warning>meep!&lt;/my-note></code></pre><p>I might likely want to apply a class to the child aside in order to affect how it
 looks. Let's apply the <code>warning-text</code> class.</p>
 <p>To do this call <code>yipApplyClasses</code>:</p>
-<pre class="prettyprint source"><code>class Note extends yip.Element {
+<pre class="prettyprint source lang-javascript"><code>class Note extends yip.Element {
   yipBuild() {
     this.yipAddElement('aside');
     this.yipApplyClasses({'warning-text': this.attributes.warning});
@@ -94,10 +95,10 @@ looks. Let's apply the <code>warning-text</code> class.</p>
 }
 
 yip.register('my-note', Note);</code></pre><p>Now, using the markup </p>
-<pre class="prettyprint source"><code>&lt;my-note>yo!&lt;/my-note>
+<pre class="prettyprint source lang-html"><code>&lt;my-note>yo!&lt;/my-note>
 &lt;my-note warning>meep!&lt;/my-note>
 &lt;my-note error>ohnoes!&lt;/my-note></code></pre><h3>Using templates</h3><p>You might want a more complicated UI, and decide to write it in a template:</p>
-<pre class="prettyprint source"><code>const t = `&lt;aside>
+<pre class="prettyprint source lang-javascript"><code>const t = `&lt;aside>
             &lt;div class=&quot;aside-content&quot;>
               &lt;slot>&lt;/slot>
             &lt;/div>
@@ -106,7 +107,7 @@ yip.register('my-note', Note);</code></pre><p>Now, using the markup </p>
               &lt;button>Not Ok&lt;/button>
             &lt;/div>
           &lt;/aside>`;</code></pre><p>You can then use this template:</p>
-<pre class="prettyprint source"><code>class Note extends yip.Element {
+<pre class="prettyprint source lang-javascript"><code>class Note extends yip.Element {
   yipBuild() {
     this.yipAdd(t);
   }
@@ -114,7 +115,7 @@ yip.register('my-note', Note);</code></pre><p>Now, using the markup </p>
 
 yip.register('my-note', Note);</code></pre><h3>Applying an external template transformer</h3><p>You might decide that you want more complicated templating. Plug in whatever you
 like by overriding <code>yipRenderTemplate</code>. For example to use doT templates:</p>
-<pre class="prettyprint source"><code>class Note extends yip.Element {
+<pre class="prettyprint source lang-javascript"><code>class Note extends yip.Element {
   yipTemplate() {
     return doT.template(t)({'element': this});
   }
@@ -125,20 +126,20 @@ like by overriding <code>yipRenderTemplate</code>. For example to use doT templa
 
 yip.register('my-note', Note);</code></pre><p>Now we can have all kinds of crazy templates. The example above passes the
 element into the template, so it can get used as the <code>it.element</code> by doT.</p>
-<pre class="prettyprint source"><code>const t = `&lt;template id=&quot;my-note-template&quot;>
+<pre class="prettyprint source lang-javascript"><code>const t = `&lt;template id=&quot;my-note-template&quot;>
             &lt;aside>
               Is this a warning?
               {{= it.element.attributes.warning  }}
             &lt;/aside>`;</code></pre><p>Bring your own templating system, and hook it in. No need for plugins
 or anything.</p>
 <h3>Adding element-specific styles</h3><p>First from a loaded external stylesheet.</p>
-<pre class="prettyprint source"><code>class Note extends yip.Element {
+<pre class="prettyprint source lang-javascript"><code>class Note extends yip.Element {
   yipBuild() {
     this.yipAddStyleLink('css/mystyles.css');
   }
 }</code></pre><h3>Emiting custom events</h3><p>Elements should emit events. You can easily dispatch an event on your custom
 element, like:</p>
-<pre class="prettyprint source"><code>el.addEventListener('action-clicked', () => {});
+<pre class="prettyprint source lang-javascript"><code>el.addEventListener('action-clicked', () => {});
 el.yipEmit('action-clicked');</code></pre><h3>Connecting internal events</h3><p>Just connect them in <code>yipBuild</code> sometime after you have created the elements.</p>
 <h3>Using Slots</h3><p>Slots are amazing. They tell the browser where in your shadow DOM children of
 your element should be added. You should probably define a <code>&lt;slot&gt;</code> element in
@@ -168,7 +169,7 @@ there.</em></p></article>
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Jan 24 2017 07:37:00 GMT+0000 (GMT)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> on Tue Jan 24 2017 11:40:35 GMT+0000 (GMT)
 </footer>
 
 <script> prettyPrint(); </script>

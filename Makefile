@@ -29,13 +29,13 @@ mdc:
 	rm -rf src/mdc
 	cp -R ../material-components-web/build src/mdc
 
-build: init jsdoc demos
-	rollup -c etc/rollup_conf.js  > dist/yip.js
+build: init jsdoc demos tester
 	# Babel is broken for CustomElements
 	# TODO fix
-	# babel --presets es2015-script --plugins transform-custom-element-classes --plugins transform-es2015-classes > dist/yip.js
-	uglifyjs dist/yip.js > dist/yip.min.js
+	rollup -c etc/rollup_conf.js > dist/yip.js
+	#uglifyjs dist/yip.js > dist/yip.min.js
 	cp dist/yip.js docs/demo/
+	cp dist/yip.js docs/test/
 
 init:
 	mkdir -p docs dist
@@ -44,9 +44,14 @@ demos: jsdoc
 	rm -rf docs/demo
 	cp -R demo docs/
 
+tester:
+	rm -rf docs/test
+	mkdir docs/test
+	cp test/* docs/test/
+
 deploy: build demos
 	cp etc/firebase_conf.json firebase.json
-	firebase deploy
+	firebase deploy --project yipjs-7c3d2
 	rm firebase.json
 
 serve:

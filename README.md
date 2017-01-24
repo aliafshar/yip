@@ -4,6 +4,7 @@
 [Github](https://github.com/aliafshar/yip)
 | [Docs](https://yipjs-7c3d2.firebaseapp.com/)
 | [Demo](https://yipjs-7c3d2.firebaseapp.com/demo)
+| [Tests](https://yipjs-7c3d2.firebaseapp.com/test)
 | [License (Apache2)](https://github.com/aliafshar/yip/blob/master/LICENSE)
 
 

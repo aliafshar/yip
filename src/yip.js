@@ -46,7 +46,7 @@ export class util {
   static addElement(root, elementName, hasSlot=true) {
     const node = document.createElement(elementName);
     if (hasSlot) {
-      node.append(buildSlot());
+      node.append(util.buildSlot());
     }
     root.append(node);
     return node;
@@ -247,7 +247,7 @@ export class Element extends HTMLElement {
    * This simply creates
    */
   yipAddElement(elementName, hasSlot=true) {
-    this.yipNode = addElement(this.yipRoot, elementName, hasSlot);
+    this.yipNode = util.addElement(this.yipRoot, elementName, hasSlot);
     return this.yipNode;
   }
 

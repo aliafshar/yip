@@ -1,5 +1,4 @@
 *.swp
-src/mdc
-dist/mdc
 docs/demo
+docs/test
 node_modules
