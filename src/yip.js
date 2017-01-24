@@ -106,6 +106,23 @@ export class util {
     }
   }
 
+  /**
+   * Copy attributes from one node to another.
+   * 
+   * @param {HTMLElement} sourceNode
+   *
+   *    The element to copy attributes from.
+   *
+   * @param {HTMLElement} targetNode
+   *
+   *    The element to copy attributes to.
+   *
+   * @param {object} attrsList
+   *
+   *    The attributes to copy, in the format
+   *    attribute: true/false as to whether the attribute should be copied.
+   *
+   */
   static copyAttrs(targetNode, sourceNode, attrsList) {
     for (let i = 0; i < attrsList.length; i++) {
       const attrName = attrsList[i];
@@ -124,19 +141,9 @@ export class util {
  * You should subclass this to create a new element type to add DOM, behaviour,
  * styling, etc.
  *
- * Configuring your element is done exclusively with overriding methods that
- * return options. Yes, this might seem annoying, but it is unambiguously the
- * one way to do it in this library.
- *
  */
 export class Element extends HTMLElement {
 
-  /**
-   * Creates a new Element.
-   *
-   * This constructor is never called directly. Instead, use {@link
-   * document.createElement('my-element-name') }
-   */
   constructor() {
     super();
     
@@ -331,4 +338,3 @@ export function register(elementName, elementType) {
   customElements.define(elementName, elementType);
   return elementType;
 }
-

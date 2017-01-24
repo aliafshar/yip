@@ -22,6 +22,7 @@ esdoc: init
 	make mdc
 
 jsdoc: init
+	rm -rf docs
 	jsdoc -R README.md -d docs -c etc/jsdoc_conf.js src/yip.js 
 
 mdc:
@@ -29,7 +30,10 @@ mdc:
 	cp -R ../material-components-web/build src/mdc
 
 build: init jsdoc demos
-	rollup -f iife --name yip src/yip.js | babel --presets es2015 > dist/yip.js
+	rollup -c etc/rollup_conf.js  > dist/yip.js
+	# Babel is broken for CustomElements
+	# TODO fix
+	# babel --presets es2015-script --plugins transform-custom-element-classes --plugins transform-es2015-classes > dist/yip.js
 	uglifyjs dist/yip.js > dist/yip.min.js
 	cp dist/yip.js docs/demo/
 
