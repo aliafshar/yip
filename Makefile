@@ -13,7 +13,6 @@
 # limitations under the License.
 
 dev: build
-	echo built
 	127 docs
 
 esdoc: init
@@ -30,9 +29,10 @@ mdc:
 	cp -R ../material-components-web/build src/mdc
 
 build: init jsdoc demos tester
+	rollup -c etc/rollup_conf.js > dist/yip.js
 	# Babel is broken for CustomElements
 	# TODO fix
-	rollup -c etc/rollup_conf.js > dist/yip.js
+	# babel --presets es2015-script src/yip.js > dist/yip.js
 	#uglifyjs dist/yip.js > dist/yip.min.js
 	cp dist/yip.js docs/demo/
 	cp dist/yip.js docs/test/
@@ -42,12 +42,16 @@ init:
 
 demos: jsdoc
 	rm -rf docs/demo
-	cp -R demo docs/
+	mkdir docs/demo
+	cp -R demo/* docs/demo/
+	cp third_party/native-shim.js docs/demo/
+	cp third_party/custom-elements.min.js docs/demo/
 
 tester:
 	rm -rf docs/test
 	mkdir docs/test
 	cp test/* docs/test/
+	cp third_party/* docs/test/
 
 deploy: build demos
 	cp etc/firebase_conf.json firebase.json

@@ -147,9 +147,9 @@ class util {
  */
 class Element extends HTMLElement {
 
-  constructor() {
-    super();
-    
+  constructor(_) { return (_ = super(_)).init(), _; }
+  
+  init() {
     // These are the main yip state variables
     
     /**
@@ -314,6 +314,18 @@ class Element extends HTMLElement {
 
   yipAddStyleLink(styleUrl) {
     util.addStyleLink(this.yipRoot, styleUrl);
+  }
+
+  yipAddStyle(styleText) {
+    const node = document.createElement('style');
+    node.innerHTML = styleText;
+    this.yipRoot.append(node);
+  }
+
+  yipAddScript(scriptText) {
+    const node = document.createElement('script');
+    node.innerHTML = scriptText;
+    this.yipRoot.append(node);
   }
 
   /**

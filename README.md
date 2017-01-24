@@ -172,6 +172,13 @@ class Note extends yip.Element {
 }
 ```
 
+### Child handling
+
+Because you are in the shadow DOM, an Element's children will not return what
+you want. What you usually want is the children of the slot. For this we added
+`yipChildren`, an attribute that returns the assigned nodes of the element's
+slot.
+
 ### Emiting custom events
 
 Elements should emit events. You can easily dispatch an event on your custom

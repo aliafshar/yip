@@ -10,6 +10,7 @@ export default {
     //babel({
     //  exclude: 'node_modules/**',
     //  presets: ['es2015-script'],
+    //  plugins: ['transform-custom-element-classes'],
     //})
   ],
 };

@@ -32,8 +32,6 @@ describe('Element', function() {
   describe('regiser', function() {
 
 
-    _element
-
     it('store attr', function() {
       class _TestElement extends yip.Element {
         yipBuild() {
