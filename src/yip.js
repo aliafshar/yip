@@ -229,6 +229,13 @@ export class Element extends HTMLElement {
       templateContent = this.yipTemplate();
     }
     this.yipNode = util.addTemplate(this.yipRoot, templateContent);
+    console.log(this.yipNode);
+    this.yipFindSlot();
+    return this.yipNode;
+  }
+
+  yipFindSlot() {
+    this.yipSlot = this.yipNode.querySelector('slot');
   }
 
   /**
@@ -248,6 +255,7 @@ export class Element extends HTMLElement {
    */
   yipAddElement(elementName, hasSlot=true) {
     this.yipNode = util.addElement(this.yipRoot, elementName, hasSlot);
+    this.yipFindSlot();
     return this.yipNode;
   }
 
