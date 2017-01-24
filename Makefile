@@ -44,8 +44,6 @@ demos: jsdoc
 	rm -rf docs/demo
 	mkdir docs/demo
 	cp -R demo/* docs/demo/
-	cp third_party/native-shim.js docs/demo/
-	cp third_party/custom-elements.min.js docs/demo/
 
 tester:
 	rm -rf docs/test
